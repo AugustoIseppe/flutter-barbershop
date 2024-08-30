@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:barbershop/app/data/auth/auth.dart';
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/repositories/user_repository.dart';
@@ -11,7 +9,6 @@ import 'package:barbershop/app/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/header_user_page.dart';
@@ -74,23 +71,6 @@ class _UserProfileState extends State<UserProfile> {
       // Remover o SnackBar após a duração especificada
       Future.delayed(Duration(seconds: 5)).then((_) => snackBar.remove());
     }
-
-    File? _selectedImage;
-
-    Future<void> _pickImage() async {
-      try {
-        final pickedFile =
-            await ImagePicker().pickImage(source: ImageSource.gallery);
-        if (pickedFile != null) {
-          setState(() {
-            _selectedImage = File(pickedFile.path);
-          });
-        }
-      } catch (e) {
-        print("Erro ao selecionar imagem: $e");
-      }
-    }
-
     final _formKey = GlobalKey<FormState>();
     final _formKey1 = GlobalKey<FormState>();
 

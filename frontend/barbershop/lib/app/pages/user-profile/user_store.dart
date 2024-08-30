@@ -25,7 +25,7 @@ class UserStore with ChangeNotifier {
       );
 
       users = result;  // Aqui, 'result' deve ser um objeto, não uma lista
-      print("USERS - USERSTORE: $users");
+      print("USERS - USERSTOREE: $users");
       print("TIPO USERS - USERSTORE: ${users.runtimeType}");
       print("RESULT - USERSTORE: $result");
       print("TIPO RESULT - USERSTORE: ${result.runtimeType}");

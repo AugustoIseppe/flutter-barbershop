@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 class SlotsModel {
  final String id;
-  final String babershopId;
+  final String barbershopid;
   final DateTime date;
-  final String timeId;
+  final String timeid;
   final bool isavailable;
   final DateTime createdat;
   final DateTime updatedat;
@@ -12,9 +12,9 @@ class SlotsModel {
 
   SlotsModel({
     required this.id,
-    required this.babershopId,
+    required this.barbershopid,
     required this.date,
-    required this.timeId,
+    required this.timeid,
     required this.isavailable,
     required this.createdat,
     required this.updatedat,
@@ -24,9 +24,9 @@ class SlotsModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'babershopId': babershopId,
+      'barbershopid': barbershopid,
       'date': date,
-      'timeId': timeId,
+      'timeId': timeid,
       'isavailable': isavailable,
       'createdat': createdat,
       'updatedat': updatedat,
@@ -44,9 +44,9 @@ class SlotsModel {
   factory SlotsModel.fromMap(Map<String, dynamic> json) {
     return SlotsModel(
       id: json['id'] ?? 'nao checou nenhum id',
-      babershopId: json['babershopId'] ?? 'nao checou nenhum barbershopid',
+      barbershopid: json['barbershopid'] ?? 'nao checou nenhum barbershopid',
       date: DateTime.parse(json['date']),
-      timeId: json['timeId'] ?? 'nao checou nenhum timeId',
+      timeid: json['timeid'] ?? 'nao checou nenhum timeId',
       isavailable: json['isavailable'] ?? true,
       createdat: DateTime.parse(json['createdat']),
       updatedat: DateTime.parse(json['updatedat']),

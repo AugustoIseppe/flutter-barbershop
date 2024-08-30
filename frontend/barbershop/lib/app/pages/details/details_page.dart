@@ -788,8 +788,11 @@ class _DatailsPageState extends State<DetailsPage> {
                                   setState(() {
                                     _selectTime = store.slots[index].time;
                                   });
-                                  print(
-                                      'Horário selecionado: ${store.slots[index].time}');
+                                  print('Horário selecionado: ${store.slots[index].time}');
+                                  print("Id do horário selecionado: ${store.slots[index].id}");
+                                  print("Timeid do horário selecionado: ${store.slots[index].timeid}");
+                                  print("Isavailable do horário selecionado: ${store.slots[index].isavailable}");
+                                  print("Baberid do horário selecionado: ${store.slots[index].barbershopid}");
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

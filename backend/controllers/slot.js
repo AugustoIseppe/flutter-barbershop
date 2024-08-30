@@ -70,7 +70,43 @@ export const createAvailableSlot = async (request, response) => {
     }
 };
 
+export const updateSlot = async (request, response) => {
+    try {
+        const { id, timeId, date, barbershopId } = request.body;
 
+        // Validação básica para garantir que todos os campos necessários estão presentes
+        if (!id || !timeId || !date || !barbershopId) {
+            return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barbershopid) são necessários.' });
+        }
+
+        // Consulta SQL para atualizar a coluna isAvailable
+        const query = await sql`
+            UPDATE "AvailableSlots"
+            SET "isavailable" = FALSE
+            WHERE "id" = ${id}
+              AND "timeid" = ${timeId}
+              AND "date" = ${date}
+              AND "barbershopid" = ${barbershopId}
+              AND "isavailable" = TRUE
+            RETURNING *;
+        `;
+
+        if (query.count === 0) {
+            return response.status(404).json({ message: 'Slot de horário não encontrado ou já não está disponível' });
+        }
+
+        response.status(200).json({ message: 'Slot de horário atualizado com sucesso', data: query });
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ message: 'Erro ao atualizar slot de horário' });
+    }
+};
+
+
+// UPDATE "DefaultSlots"
+//             SET barbershopId = ${barbershopId}, time = ${time}, date = ${date}
+//             WHERE id = ${id}
+//             RETURNING *;
 
 
 
