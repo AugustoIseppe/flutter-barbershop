@@ -24,22 +24,16 @@ Future<List<BookingModel>> getBookingById(String id, String barbershopId) async 
 
     if (response.statusCode != 200) {
       // Imprime a resposta para ver o conteúdo completo
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
       throw Exception('Erro ao buscar agendamentos: ${response.body}');
     }
 
     final bookingData = jsonDecode(response.body);
-    print(bookingData.runtimeType);
-    print(bookingData);
-    print('CHEGUEI AQUI -> 1');
 
     final booking = bookingData
         .map<BookingModel>((booking) => BookingModel.fromMap(booking))
         .toList();
     return booking;
   } catch (e) {
-    print('Erro: $e');
     throw Exception('Erro ao buscar agendamento: $e');
   }
 }
@@ -85,10 +79,9 @@ Future<void> createBooking(String userId, List<String> serviceId, DateTime date,
     }
 
     // Decodificar a resposta apenas se for necessário
-    final responseData = jsonDecode(response.body);
+    jsonDecode(response.body);
 
     // Aqui você pode fazer algo com responseData, se necessário
-    print('Dados do agendamento criados: $responseData');
 
   } catch (e) {
     throw Exception('Erro ao criar agendamento: $e');

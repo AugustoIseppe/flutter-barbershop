@@ -7,7 +7,7 @@ class InitialPage extends StatefulWidget {
   final Map<String, dynamic> userData;
 
 
-  InitialPage({super.key, required this.userData});
+  const InitialPage({super.key, required this.userData});
 
   @override
   State<InitialPage> createState() => _InitialPageState();

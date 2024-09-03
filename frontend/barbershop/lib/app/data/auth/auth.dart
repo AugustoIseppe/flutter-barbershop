@@ -27,22 +27,24 @@ Future<List<UserModel>> login(String email, String password) async {
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
-      print('JSON Retornado DO LOGIN (AUTH): $jsonData');
+      print("JSON DATA: $jsonData");
 
       // Converte a lista de JSON para uma lista de objetos UserModel
       final users = (jsonData as List)
           .map<UserModel>((json) => UserModel.fromMap(json))
           .toList();
-
+      for (var user in users) {
+        print("USER123123: ${user.toMap()}");
+      }
       // Salva o primeiro usuário nos SharedPreferences
       final userMap = users[0].toMap();
       await Preferences.saveMap('userDataSharedPreferences', userMap);
       await Preferences.getMap('userDataSharedPreferences');
-
+      print(userMap);
       _userData = userMap;
-      print('DADOS DO LOGIN: $_userData');
+      print(users);
+      print("USER DATA: $_userData");
       notifyListeners();
-
       return users;
     } else {
       throw Exception('Falha ao fazer login: ${response.reasonPhrase}');
@@ -58,7 +60,7 @@ Future<List<UserModel>> login(String email, String password) async {
   Future<bool> tryAutoLogin() async {
     final storedUserData =
         await Preferences.getMap('userDataSharedPreferences');
-
+    print("STORED USER DATA: $storedUserData");
     if (storedUserData.isNotEmpty) {
       _userData = storedUserData;
       notifyListeners();
@@ -70,11 +72,9 @@ Future<List<UserModel>> login(String email, String password) async {
 
   Future<void> logout() async {
     await Preferences.remove('userDataSharedPreferences');
-    print('Usuário deslogado e dados removidos do SharedPreferences');
 
     // Verifica se os dados foram removidos corretamente
-    final storedUserData = await Preferences.getMap('userDataSharedPreferences');
-    print('Dados após logout: $storedUserData'); // Deveria imprimir null ou um mapa vazio
+    // Deveria imprimir null ou um mapa vazio
 
     _userData = {};
     notifyListeners();

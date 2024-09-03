@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:barbershop/app/data/auth/auth.dart';
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/repositories/user_repository.dart';
@@ -5,7 +7,6 @@ import 'package:barbershop/app/pages/user-profile/user_store.dart';
 import 'package:barbershop/app/pages/user-profile/widgets/info_consumer.dart';
 import 'package:barbershop/app/pages/user-profile/widgets/photo_and_name.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
-import 'package:barbershop/app/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
@@ -35,7 +36,7 @@ class _UserProfileState extends State<UserProfile> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               decoration: BoxDecoration(
                 color: colorBackground,
                 borderRadius: BorderRadius.circular(10),
@@ -51,7 +52,7 @@ class _UserProfileState extends State<UserProfile> {
                     size: 20,
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
                   message,
                   style: GoogleFonts.lato(
@@ -69,10 +70,10 @@ class _UserProfileState extends State<UserProfile> {
       overlay.insert(snackBar);
 
       // Remover o SnackBar após a duração especificada
-      Future.delayed(Duration(seconds: 5)).then((_) => snackBar.remove());
+      Future.delayed(const Duration(seconds: 5)).then((_) => snackBar.remove());
     }
-    final _formKey = GlobalKey<FormState>();
-    final _formKey1 = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
+    final formKey1 = GlobalKey<FormState>();
 
     final ColorsPalletes colorsPalletes = ColorsPalletes();
     final UserStore userStore = Provider.of(context, listen: false);
@@ -103,58 +104,53 @@ class _UserProfileState extends State<UserProfile> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                // color: Colors.white,
-                child: Column(
-                  children: [
-                    //* Header
-                    HeaderUserPage(),
-                    //* Photo and Name - User
-                    PhotoAndName(auth: auth, colorsPalletes: colorsPalletes),
-                    Container(
-                      // color: Colors.red,
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: Text(
-                                      'Suas informações',
-                                      style: GoogleFonts.lato(
-                                        textStyle: TextStyle(
-                                          fontSize: 20,
-                                          // fontWeight: FontWeight.bold,
-                                          color: colorsPalletes.nonaryColor,
-                                        ),
-                                      ),
+              Column(
+                children: [
+                  //* Header
+                  const HeaderUserPage(),
+                  //* Photo and Name - User
+                  PhotoAndName(auth: auth, colorsPalletes: colorsPalletes),
+                  Container(
+                    // color: Colors.red,
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20),
+                                child: Text(
+                                  'Suas informações',
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontSize: 20,
+                                      // fontWeight: FontWeight.bold,
+                                      color: colorsPalletes.nonaryColor,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                              ],
+                              ),
                             ),
-                          ),
-                          //* Info Consumer
-                          InfoConsumer(
-                              colorsPalletes: colorsPalletes, auth: auth),
-                        ],
-                      ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                        //* Info Consumer
+                        InfoConsumer(
+                            colorsPalletes: colorsPalletes, auth: auth),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               //!----------------- BOTÕES DE EDIÇÃO (editar perfil)-------------------
               Container(
                 margin:
-                    EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
+                    const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
                 child: Column(
                   children: [
                     Padding(
@@ -177,14 +173,14 @@ class _UserProfileState extends State<UserProfile> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  content: Container(
+                                  content: SizedBox(
                                     width: MediaQuery.of(context).size.width *
                                         0.8, // Defina a largura desejada
                                     height: 120,
                                     child: Column(
                                       children: [
                                         Form(
-                                          key: _formKey,
+                                          key: formKey,
                                           child: Column(
                                             children: [
                                               TextFormField(
@@ -229,170 +225,161 @@ class _UserProfileState extends State<UserProfile> {
                                   actions: [
                                     Column(
                                       children: [
-                                        Container(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: GestureDetector(
-                                                  onTap: () async {
-                                                    //!---------------ONTAP EDITAR PERFIL-------------------
-
-                                                    final id = auth.userData['id'];
-                                                    final email = newEmail.text;
-                                                    final name = auth.userData['name'];
-                                                    final password = auth.userData['password'];
-                                                    final phone = newPhone.text;
-                                                    print(id);
-                                                    print(email);
-                                                    print(name);
-                                                    print(password);
-                                                    print(phone);
-
-                                                    // Chama o método getUsers da UserStore para atualizar os dados
-                                                    await userStore.getUsers(
-                                                      id,
-                                                      newEmail.text,
-                                                      name,
-                                                      password,
-                                                      newPhone.text,
-                                                    );
-
-                                                    // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                                                    await auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-
-                                                    // Redesenha a tela para refletir os novos dados
-                                                    setState(() {});
-
-                                                    // Exibe o SnackBar informando sucesso
-                                                    // Exibe o SnackBar no topo
-                                                    showTopSnackBar(
-                                                        context,
-                                                        'Dados atualizados com sucesso!',
-                                                        Colors.greenAccent
-                                                            .shade700,
-                                                        Colors.greenAccent
-                                                            .shade700,
-                                                        Icons.check_circle);
-
-                                                    // Fecha o AlertDialog
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Container(
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: GestureDetector(
+                                                onTap: () async {
+                                                  //!---------------ONTAP EDITAR PERFIL-------------------
+                                        
+                                                  final id = auth.userData['id'];
+                                                  final name = auth.userData['name'];
+                                                  final password = auth.userData['password'];
+                                        
+                                                  // Chama o método getUsers da UserStore para atualizar os dados
+                                                  await userStore.getUsers(
+                                                    id,
+                                                    newEmail.text,
+                                                    name,
+                                                    password,
+                                                    newPhone.text,
+                                                  );
+                                        
+                                                  // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
+                                                  await auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+                                        
+                                                  // Redesenha a tela para refletir os novos dados
+                                                  setState(() {});
+                                        
+                                                  // Exibe o SnackBar informando sucesso
+                                                  // Exibe o SnackBar no topo
+                                                  showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      context,
+                                                      'Dados atualizados com sucesso!',
+                                                      Colors.greenAccent
+                                                          .shade700,
+                                                      Colors.greenAccent
+                                                          .shade700,
+                                                      Icons.check_circle);
+                                        
+                                                  // Fecha o AlertDialog
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: colorsPalletes
+                                                        .white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: colorsPalletes
-                                                          .white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(Iconsax.refresh,
+                                                        horizontal: 20),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(Iconsax.refresh,
+                                                            color: colorsPalletes
+                                                                .nonaryColor),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          'Atualizar',
+                                                          style: GoogleFonts
+                                                              .lato(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               color: colorsPalletes
-                                                                  .nonaryColor),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Atualizar',
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: colorsPalletes
-                                                                    .nonaryColor,
-                                                              ),
+                                                                  .nonaryColor,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                         const SizedBox(height: 5),
-                                        Container(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Container(
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: colorsPalletes
+                                                        .white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: colorsPalletes
-                                                          .white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                              Iconsax
-                                                                  .close_square,
+                                                        horizontal: 20),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                            Iconsax
+                                                                .close_square,
+                                                            color: colorsPalletes
+                                                                .nonaryColor),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          'Cancelar',
+                                                          style: GoogleFonts
+                                                              .lato(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               color: colorsPalletes
-                                                                  .nonaryColor),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Cancelar',
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: colorsPalletes
-                                                                    .nonaryColor,
-                                                              ),
+                                                                  .nonaryColor,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -415,7 +402,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Icon(Iconsax.edit,
                                     color: colorsPalletes.nonaryColor),
-                                SizedBox(
+                                const SizedBox(
                                   width: 20,
                                 ),
                                 Text(
@@ -456,14 +443,14 @@ class _UserProfileState extends State<UserProfile> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  content: Container(
+                                  content: SizedBox(
                                     width: MediaQuery.of(context).size.width *
                                         0.8, // Defina a largura desejada
                                     height: 230,
                                     child: Column(
                                       children: [
                                         Form(
-                                          key: _formKey1,
+                                          key: formKey1,
                                           child: Column(
                                             children: [
                                               //* Senha antiga
@@ -557,201 +544,188 @@ class _UserProfileState extends State<UserProfile> {
                                   actions: [
                                     Column(
                                       children: [
-                                        Container(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: GestureDetector(
-                                                  onTap: () async {
-                                                    //!---------------ONTAP EDITAR SENHA-------------------
-                                                    if (_formKey1.currentState!
-                                                        .validate()) {
-                                                      if (auth.userData[
-                                                              'password'] !=
-                                                          oldPassword.text) {
-                                                        showTopSnackBar(
-                                                            context,
-                                                            'Senha antiga incorreta!',
-                                                            Colors.redAccent
-                                                                .shade700,
-                                                            Colors.redAccent
-                                                                .shade700,
-                                                            Icons.error);
-                                                        return;
-                                                      } else {
-                                                        print(
-                                                            "oldPassword.text: ${oldPassword.text}");
-                                                        print(
-                                                            "newPassword.text: ${newPassword.text}");
-                                                        print(
-                                                            "newPasswordConfirm.text: ${newPasswordConfirm.text}");
-
-                                                        final id =
-                                                            auth.userData['id'];
-                                                        final email = auth
-                                                            .userData['email'];
-                                                        final name = auth
-                                                            .userData['name'];
-                                                        final password =
-                                                            newPassword.text;
-                                                        final phone = auth
-                                                            .userData['phone'];
-                                                        print(id);
-                                                        print(email);
-                                                        print(name);
-                                                        print(password);
-                                                        print(phone);
-
-                                                        // Chama o método getUsers da UserStore para atualizar os dados
-                                                        await userStore
-                                                            .getUsers(
-                                                          id,
-                                                          email,
-                                                          name,
-                                                          password,
-                                                          phone,
-                                                        );
-
-                                                        // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                                                        await auth
-                                                            .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-
-                                                        // Redesenha a tela para refletir os novos dados
-                                                        setState(() {});
-
-                                                        // Exibe o SnackBar informando sucesso
-                                                        // Exibe o SnackBar no topo
-                                                        showTopSnackBar(
-                                                            context,
-                                                            'Senha atualizada com sucesso!',
-                                                            Colors.greenAccent
-                                                                .shade700,
-                                                            Colors.greenAccent
-                                                                .shade700,
-                                                            Icons.check_circle);
-
-                                                        // Fecha o AlertDialog
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      }
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: GestureDetector(
+                                                onTap: () async {
+                                                  //!---------------ONTAP EDITAR SENHA-------------------
+                                                  if (formKey1.currentState!
+                                                      .validate()) {
+                                                    if (auth.userData[
+                                                            'password'] !=
+                                                        oldPassword.text) {
+                                                      showTopSnackBar(
+                                                          context,
+                                                          'Senha antiga incorreta!',
+                                                          Colors.redAccent
+                                                              .shade700,
+                                                          Colors.redAccent
+                                                              .shade700,
+                                                          Icons.error);
+                                                      return;
+                                                    } else {
+                                        
+                                                      final id =
+                                                          auth.userData['id'];
+                                                      final email = auth
+                                                          .userData['email'];
+                                                      final name = auth
+                                                          .userData['name'];
+                                                      final password =
+                                                          newPassword.text;
+                                                      final phone = auth
+                                                          .userData['phone'];
+                                        
+                                                      // Chama o método getUsers da UserStore para atualizar os dados
+                                                      await userStore
+                                                          .getUsers(
+                                                        id,
+                                                        email,
+                                                        name,
+                                                        password,
+                                                        phone,
+                                                      );
+                                        
+                                                      // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
+                                                      await auth
+                                                          .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+                                        
+                                                      // Redesenha a tela para refletir os novos dados
+                                                      setState(() {});
+                                        
+                                                      // Exibe o SnackBar informando sucesso
+                                                      // Exibe o SnackBar no topo
+                                                      showTopSnackBar(
+                                                          // ignore: use_build_context_synchronously
+                                                          context,
+                                                          'Senha atualizada com sucesso!',
+                                                          Colors.greenAccent
+                                                              .shade700,
+                                                          Colors.greenAccent
+                                                              .shade700,
+                                                          Icons.check_circle);
+                                        
+                                                      // Fecha o AlertDialog
+                                                      // ignore: use_build_context_synchronously
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     }
-                                                  },
-                                                  child: Container(
+                                                  }
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: colorsPalletes
+                                                        .secondaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: colorsPalletes
-                                                          .secondaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(Iconsax.refresh,
+                                                        horizontal: 20),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(Iconsax.refresh,
+                                                            color: colorsPalletes
+                                                                .nonaryColor),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          'Atualizar',
+                                                          style: GoogleFonts
+                                                              .lato(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               color: colorsPalletes
-                                                                  .nonaryColor),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Atualizar',
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: colorsPalletes
-                                                                    .nonaryColor,
-                                                              ),
+                                                                  .nonaryColor,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                         const SizedBox(height: 5),
-                                        Container(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Container(
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: colorsPalletes
+                                                        .secondaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: colorsPalletes
-                                                          .secondaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                              Iconsax
-                                                                  .close_square,
+                                                        horizontal: 20),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                            Iconsax
+                                                                .close_square,
+                                                            color: colorsPalletes
+                                                                .nonaryColor),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          'Cancelar',
+                                                          style: GoogleFonts
+                                                              .lato(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               color: colorsPalletes
-                                                                  .nonaryColor),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Cancelar',
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: colorsPalletes
-                                                                    .nonaryColor,
-                                                              ),
+                                                                  .nonaryColor,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -774,7 +748,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Icon(Iconsax.edit,
                                     color: colorsPalletes.nonaryColor),
-                                SizedBox(
+                                const SizedBox(
                                   width: 20,
                                 ),
                                 Text(
@@ -815,7 +789,7 @@ class _UserProfileState extends State<UserProfile> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  content: Container(
+                                  content: SizedBox(
                                     width: MediaQuery.of(context).size.width *
                                         0.8, // Defina a largura desejada
                                     height: 65,
@@ -856,18 +830,14 @@ class _UserProfileState extends State<UserProfile> {
                                                       await auth.logout();
 
                                                       // Verifica se os dados foram removidos corretamente
-                                                      final storedUserData =
-                                                          await Preferences.getMap(
-                                                              'userDataSharedPreferences');
-                                                      print(
-                                                          'Dados após logout: $storedUserData');
 
                                                       // Navega para a página de login
+                                                      // ignore: use_build_context_synchronously
                                                       Navigator.of(context)
                                                           .pushReplacementNamed(
                                                               '/login-page');
+                                                    // ignore: empty_catches
                                                     } catch (e) {
-                                                      print(e);
                                                     }
                                                   },
                                                   child: Container(
@@ -893,7 +863,7 @@ class _UserProfileState extends State<UserProfile> {
                                                           Icon(Iconsax.refresh,
                                                               color: colorsPalletes
                                                                   .nonaryColor),
-                                                          SizedBox(
+                                                          const SizedBox(
                                                             width: 20,
                                                           ),
                                                           Text(
@@ -921,68 +891,66 @@ class _UserProfileState extends State<UserProfile> {
                                           ),
                                         ),
                                         const SizedBox(height: 5),
-                                        Container(
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 20),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Container(
+                                        Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: colorsPalletes
+                                                        .secondaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                  ),
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: colorsPalletes
-                                                          .secondaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                              Iconsax
-                                                                  .close_square,
+                                                        horizontal: 20),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                            Iconsax
+                                                                .close_square,
+                                                            color: colorsPalletes
+                                                                .nonaryColor),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Text(
+                                                          'Cancelar',
+                                                          style: GoogleFonts
+                                                              .lato(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
                                                               color: colorsPalletes
-                                                                  .nonaryColor),
-                                                          SizedBox(
-                                                            width: 20,
-                                                          ),
-                                                          Text(
-                                                            'Cancelar',
-                                                            style: GoogleFonts
-                                                                .lato(
-                                                              textStyle:
-                                                                  TextStyle(
-                                                                fontSize: 18,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal,
-                                                                color: colorsPalletes
-                                                                    .nonaryColor,
-                                                              ),
+                                                                  .nonaryColor,
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -1005,7 +973,7 @@ class _UserProfileState extends State<UserProfile> {
                               children: [
                                 Icon(Iconsax.trash,
                                     color: colorsPalletes.nonaryColor),
-                                SizedBox(
+                                const SizedBox(
                                   width: 20,
                                 ),
                                 Text(

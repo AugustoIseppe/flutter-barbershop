@@ -1,6 +1,5 @@
 import 'package:barbershop/app/data/auth/auth.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
-import 'package:barbershop/app/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,7 +43,7 @@ class AppDrawer extends StatelessWidget {
                     letterSpacing: 4.0,
                     shadows: <Shadow>[
                       Shadow(
-                        offset: Offset(1.0, 1.0),
+                        offset: const Offset(1.0, 1.0),
                         blurRadius: 5.0,
                         color: colorsPalletes.secondaryColor,
                       ),
@@ -61,7 +60,7 @@ class AppDrawer extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      FaIcon(FontAwesomeIcons.house).icon,
+                      const FaIcon(FontAwesomeIcons.house).icon,
                       color: colorsPalletes.nonaryColor,
                       size: 20,
                     ),
@@ -93,7 +92,7 @@ class AppDrawer extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      FaIcon(FontAwesomeIcons.scissors).icon,
+                      const FaIcon(FontAwesomeIcons.scissors).icon,
                       color: colorsPalletes.nonaryColor,
                       size: 20,
                     ),
@@ -125,7 +124,7 @@ class AppDrawer extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      FaIcon(FontAwesomeIcons.userLarge).icon,
+                      const FaIcon(FontAwesomeIcons.userLarge).icon,
                       color: colorsPalletes.nonaryColor,
                       size: 20,
                     ),
@@ -157,7 +156,7 @@ class AppDrawer extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      FaIcon(FontAwesomeIcons.xmark).icon,
+                      const FaIcon(FontAwesomeIcons.xmark).icon,
                       color: colorsPalletes.nonaryColor,
                       size: 20,
                     ),
@@ -182,11 +181,9 @@ class AppDrawer extends StatelessWidget {
               await auth.logout();
 
               // Verifica se os dados foram removidos corretamente
-              final storedUserData =
-                  await Preferences.getMap('userDataSharedPreferences');
-              print('Dados após logout: $storedUserData');
 
               // Navega para a página de login
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushReplacementNamed('/login-page');
             },
           ),

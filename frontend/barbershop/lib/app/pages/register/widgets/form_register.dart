@@ -35,8 +35,8 @@ class _FormRegisterState extends State<FormRegister> {
           _selectedImage = File(pickedFile.path);
         });
       }
+    // ignore: empty_catches
     } catch (e) {
-      print("Erro ao selecionar imagem: $e");
     }
   }
 
@@ -57,12 +57,11 @@ class _FormRegisterState extends State<FormRegister> {
         if (userResponse.isNotEmpty) {
           _showDialog(userResponse.first['name']);
         } else {
-          print('Erro ao criar usuário');
         }
         
       }
+    // ignore: empty_catches
     } catch (e) {
-      print(e);
     }
   }
 
@@ -152,7 +151,7 @@ class _FormRegisterState extends State<FormRegister> {
                               child: CircleAvatar(
                                   radius: 80,
                                   backgroundImage: FileImage(_selectedImage!),
-                                  child: Text('')),
+                                  child: const Text('')),
                             )
                           : InkWell(
                               onTap: _pickImage,
@@ -446,7 +445,6 @@ class _FormRegisterState extends State<FormRegister> {
                     ),
                     onPressed: () {
                       createUser();
-                      print(_selectedImage);
                     },
                     child: Text(
                       "Criar conta",

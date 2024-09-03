@@ -73,11 +73,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: "Barbershop Ballan'aibs",
-        home: AuthCheck(),
+        home: const AuthCheck(),
         debugShowCheckedModeBanner: false,
         routes: {
           Routes.homePage: (context) => HomePage(
-                userData: {},
+                userData: const {},
               ),
           Routes.loginPage: (context) => const LoginPage(),
           Routes.registerPage: (context) => const RegisterPage(),
@@ -86,9 +86,9 @@ class MyApp extends StatelessWidget {
               barbershop: ModalRoute.of(context)!.settings.arguments
                   as BarbershopModel),
           Routes.bookingPage: (context) =>
-              BookingPage(userData: {}, barbershopData: {}),
+              const BookingPage(userData: {}, barbershopData: {}),
           Routes.barbershopPage: (context) => const BarbershopPage(),
-          Routes.userProfile: (context) => UserProfile(),
+          Routes.userProfile: (context) => const UserProfile(),
         },
       ),
     );

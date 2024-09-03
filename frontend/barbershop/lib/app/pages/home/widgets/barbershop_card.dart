@@ -181,7 +181,6 @@ class BarbershopCard extends StatelessWidget {
                                           ),
                                         ),
                                         onPressed: () {
-                                          print("userDatabarbershopcard: $userData");
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
                                               builder: (context) => DetailsPage(

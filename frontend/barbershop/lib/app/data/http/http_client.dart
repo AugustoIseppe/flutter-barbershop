@@ -1,8 +1,6 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-
 
 //! IHttpClient -> Interface para o HttpClient
 abstract class IHttpClient {
@@ -24,7 +22,7 @@ abstract class IHttpClient {
     required String fileField,
   });
 
-    //----
+  //----
   Future<http.Response> uploadFilePut({
     required String url,
     required Map<String, String> fields,
@@ -44,11 +42,16 @@ abstract class IHttpClient {
     required Map<String, dynamic> headers,
   });
 
-
   Future<http.Response> put({
     required String url,
     Map<String, String>? headers,
     dynamic body,
+  });
+
+  Future<http.Response> updateSlot({
+    required String url,
+    required Map<String, String> headers,
+    required dynamic body,
   });
 
   Future<http.Response> delete({
@@ -56,7 +59,6 @@ abstract class IHttpClient {
   });
   // void close();
 }
-
 
 //! HttpClient -> Implementação da interface IHttpClient
 class HttpClient implements IHttpClient {
@@ -93,7 +95,8 @@ class HttpClient implements IHttpClient {
       ..fields.addAll(fields);
 
     if (file != null) {
-      request.files.add(await http.MultipartFile.fromPath(fileField, file.path));
+      request.files
+          .add(await http.MultipartFile.fromPath(fileField, file.path));
     }
 
     final response = await request.send();
@@ -101,7 +104,7 @@ class HttpClient implements IHttpClient {
     return http.Response.fromStream(response);
   }
 
-    @override
+  @override
   Future<http.Response> uploadFilePut({
     required String url,
     required Map<String, String> fields,
@@ -112,7 +115,8 @@ class HttpClient implements IHttpClient {
       ..fields.addAll(fields);
 
     if (file != null) {
-      request.files.add(await http.MultipartFile.fromPath(fileField, file.path));
+      request.files
+          .add(await http.MultipartFile.fromPath(fileField, file.path));
     }
 
     final response = await request.send();
@@ -148,23 +152,32 @@ class HttpClient implements IHttpClient {
       body: encodedBody,
     );
   }
-  
+
   @override
   Future<http.Response> delete({required String url}) {
     return client.delete(Uri.parse(url));
   }
-  
+
   @override
   Future<http.Response> updateUserImage({required String url, File? file}) {
-
     var request = http.MultipartRequest('PUT', Uri.parse(url))
-      ..files.add(http.MultipartFile.fromBytes('image', file!.readAsBytesSync(), filename: file.path.split('/').last));
+      ..files.add(http.MultipartFile.fromBytes('image', file!.readAsBytesSync(),
+          filename: file.path.split('/').last));
 
     return request.send().then((response) async {
       return http.Response.fromStream(response);
     });
   }
 
-  
-
+  @override
+  Future<http.Response> updateSlot(
+      {required String url,
+      required Map<String, String> headers,
+      required dynamic body}) {
+    return client.put(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+  }
 }

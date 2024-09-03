@@ -79,10 +79,9 @@ class UserRepository implements IUserRepository {
         // print(body);
         return body;
       } else {
-        print('Erro: ${response.statusCode}');
       }
+    // ignore: empty_catches
     } catch (e) {
-      print('Exception: $e');
     }
   }
 
@@ -99,11 +98,9 @@ class UserRepository implements IUserRepository {
         throw Exception('Erro na atualização dos dados');
       }
       final List<dynamic> body = jsonDecode(response.body);
-      print('BODY - USERREPOSITORY *****UPDATE--IMAGE*****: $body');
 
       // Supondo que a API retorne uma lista com um único objeto, pegamos o primeiro
       final updatedUserData = body.isNotEmpty ? body.first : {};
-      print("UPDATED USER DATA - USERREPOSITORY *****UPDATE--IMAGE*****: $updatedUserData");
 
       final existingData = await Preferences.getMap('userDataSharedPreferences');
 
@@ -115,7 +112,6 @@ class UserRepository implements IUserRepository {
 
       // Salva os novos dados no SharedPreferences
       await Preferences.saveMap('userDataSharedPreferences', updatedUserData);
-      print('DADOS DO LOGIN APÓS ATUALIZAR USUÁRIO -> USERREPOSITORY *****UPDATE--IMAGE*****: $updatedUserData');
       return updatedUserData;
     } catch (e) {
       throw Exception('Erro ao atualizar imagem: $e');
@@ -142,7 +138,6 @@ class UserRepository implements IUserRepository {
       }
 
       final List<dynamic> body = jsonDecode(response.body);
-      print('BODY - USERREPOSITORY: $body');
 
       // Supondo que a API retorne uma lista com um único objeto, pegamos o primeiro
       final updatedUserData = body.isNotEmpty ? body.first : {};
@@ -155,11 +150,9 @@ class UserRepository implements IUserRepository {
       existingData['name'] = updatedUserData['name'];
       existingData['password'] = updatedUserData['password'];
       existingData['phone'] = updatedUserData['phone'];
-      print("EXISTING DATA - USERREPOSITORY: $existingData");
 
       // Salva os novos dados no SharedPreferences
       await Preferences.saveMap('userDataSharedPreferences', updatedUserData);
-      print('DADOS DO LOGIN APÓS ATUALIZAR USUÁRIO -> USERREPOSITORY: $updatedUserData');
       return updatedUserData;
     } catch (e) {
       throw Exception('Erro ao atualizar email e telefone: $e');
@@ -176,7 +169,6 @@ class UserRepository implements IUserRepository {
       }
 
       final body = jsonDecode(response.body);
-      print(body);
       return body;
     } catch (e) {
       throw Exception('Erro ao deletar usuário: $e');

@@ -26,15 +26,10 @@ class _FormLoginState extends State<FormLogin> {
     Auth auth = Provider.of<Auth>(context, listen: false);
     try {
       if (_formKey.currentState!.validate()) {
-        final teste = await auth.login(
-          _emailController.text,
-          _passwordController.text,
-        );
-        print('USERDATA LOGINPAGE: ${teste[0].toMap()}');
+        await auth.login(_emailController.text, _passwordController.text);
         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(userData: auth.userData)));
       }
     } catch (e) {
-      print('Erro ao fazer login: $e');
       _showErrorDialog(
           'Credenciais inválidas. Tente novamente ou contate o administrador');
     }
@@ -215,8 +210,6 @@ class _FormLoginState extends State<FormLogin> {
                           ),
                           onPressed: () {
                             // Navigator.pushNamed(context, "/home");
-                            print(_emailController.text);
-                            print(_passwordController.text);
                             _loginPage();
                           },
                           child: Text(

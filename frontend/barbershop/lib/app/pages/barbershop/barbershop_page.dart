@@ -29,7 +29,7 @@ class _BarbershopPageState extends State<BarbershopPage> {
           children: [
             // Imagem de fundo
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/logo1.jpeg'),
                   fit: BoxFit.cover,

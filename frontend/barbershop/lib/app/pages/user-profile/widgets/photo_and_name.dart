@@ -38,8 +38,6 @@ class _PhotoAndNameState extends State<PhotoAndName> {
           _selectedImage = File(pickedFile.path);
         });
       }
-    } catch (e) {
-      print("Erro ao selecionar imagem: $e");
     } finally {
       setState(() {
         _isLoading = false;
@@ -58,104 +56,100 @@ class _PhotoAndNameState extends State<PhotoAndName> {
         if (userStore.error.isNotEmpty) {
           return Text(userStore.error);
         }
-        return Container(
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Stack(
-                children: [
-                  _selectedImage != null
-                      ? InkWell(
-                          // onTap: _pickImage,
-                          onTap: () async {},
+        return Column(
+          children: [
+            const SizedBox(height: 50),
+            Stack(
+              children: [
+                _selectedImage != null
+                    ? InkWell(
+                        // onTap: _pickImage,
+                        onTap: () async {},
+                        child: CircleAvatar(
+                          radius: 125,
                           child: CircleAvatar(
-                            radius: 125,
+                            radius: 123,
+                            backgroundImage: FileImage(_selectedImage!),
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () async {},
+                        child: SizedBox(
+                          child: CircleAvatar(
+                            radius: 126,
+                            backgroundColor: Colors.white,
                             child: CircleAvatar(
                               radius: 123,
-                              backgroundImage: FileImage(_selectedImage!),
+                              backgroundImage: NetworkImage(
+                                  "http://10.0.2.2:8800/users/uploads/${widget.auth.userData["image"]}"),
                             ),
                           ),
-                        )
-                      : InkWell(
-                          onTap: () async {},
-                          child: SizedBox(
-                            child: CircleAvatar(
-                              radius: 126,
-                              backgroundColor: Colors.white,
-                              child: CircleAvatar(
-                                radius: 123,
-                                backgroundImage: NetworkImage(
-                                    "http://10.0.2.2:8800/users/uploads/${widget.auth.userData["image"]}"),
-                              ),
-                            ),
-                          ),
-                        ),
-                  // Exibe o CircularProgressIndicator quando está carregando
-                  if (_isLoading)
-                    Positioned.fill(
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              widget.colorsPalletes.primaryColor),
                         ),
                       ),
-                    ),
-                  Positioned(
-                    bottom: 10,
-                    right: 30,
-                    child: GestureDetector(
-                      onTap: () async {
-                        await _pickImage();
-                        print("_selectedImage: $_selectedImage");
-                        final id = widget.auth.userData['id'];
-
-                        print(id);
-
-                        //Chama o método getUsers da UserStore para atualizar os dados
-                        await userStore.getUsersforImage(
-                          id,
-                          _selectedImage,
-                        );
-                        // print("&*&*&*&*&*&*&&*&&*naosei: ${naosei["imageUrl"]}");
-
-                        // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                        await widget.auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-
-                        // Redesenha a tela para refletir os novos dados
-                        setState(() {});
-
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: widget.colorsPalletes.tertiaryColor,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Icon(
-                          Icons.edit,
-                          color: widget.colorsPalletes.nonaryColor,
-                        ),
+                // Exibe o CircularProgressIndicator quando está carregando
+                if (_isLoading)
+                  Positioned.fill(
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            widget.colorsPalletes.primaryColor),
                       ),
                     ),
                   ),
-                ],
-              ),
-              // const SizedBox(height: 20),
-              //NetworkImage("http://192.168.1.109:8800/users/uploads/${widget.auth.userData["imageUrl"]}"),
-              Text(
-                widget.auth.userData['name'],
-                style: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: widget.colorsPalletes.white,
+                Positioned(
+                  bottom: 10,
+                  right: 30,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await _pickImage();
+                      final id = widget.auth.userData['id'];
+        
+        
+                      //Chama o método getUsers da UserStore para atualizar os dados
+                      await userStore.getUsersforImage(
+                        id,
+                        _selectedImage,
+                      );
+                      // print("&*&*&*&*&*&*&&*&&*naosei: ${naosei["imageUrl"]}");
+        
+                      // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
+                      await widget.auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+        
+                      // Redesenha a tela para refletir os novos dados
+                      setState(() {});
+        
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: widget.colorsPalletes.tertiaryColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Icon(
+                        Icons.edit,
+                        color: widget.colorsPalletes.nonaryColor,
+                      ),
+                    ),
                   ),
                 ),
-                overflow: TextOverflow.ellipsis,
+              ],
+            ),
+            // const SizedBox(height: 20),
+            //NetworkImage("http://192.168.1.109:8800/users/uploads/${widget.auth.userData["imageUrl"]}"),
+            Text(
+              widget.auth.userData['name'],
+              style: GoogleFonts.lato(
+                textStyle: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: widget.colorsPalletes.white,
+                ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 20),
+          ],
         );
       },
     );

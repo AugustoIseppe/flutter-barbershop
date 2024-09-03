@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 class BookingPage extends StatefulWidget {
    final Map<String, dynamic> userData ;
    final Map<String, dynamic> barbershopData ;
-   BookingPage({
+   const BookingPage({
     super.key,
     required this.userData,
     required this.barbershopData,
@@ -72,120 +72,235 @@ class _BookingPageState extends State<BookingPage> {
             }
             groupedBookings[formattedDate]!.add(booking);
           }
-
           return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-              vertical: 4.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Histórico de Agendamentos',
-                  style: GoogleFonts.lato(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: colorsPalletes.nonaryColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: ListView(
-                    children: groupedBookings.entries.map((entry) {
-                      String date = entry.key;
-                      List<dynamic> bookings = entry.value;
+  padding: const EdgeInsets.symmetric(
+    horizontal: 8.0,
+    vertical: 4.0,
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Text(
+        'Histórico de Agendamentos',
+        style: GoogleFonts.lato(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: colorsPalletes.nonaryColor,
+        ),
+      ),
+      const SizedBox(height: 8),
+      Expanded(
+        child: ListView.builder(
+          itemCount: store.bookings.length,
+          itemBuilder: (context, index) {
+            var booking = store.bookings[index];
+            String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.parse(booking.date.toString()));
+            String formattedTime = _formatTimeForPostgres(DateTime.parse(booking.time.toString()));
 
-                      // Calculando o total para essa data
-                      double somaTotalDia = bookings.fold(
-                          0, (sum, booking) => sum + booking.price);
+            // Agrupando os serviços da mesma reserva
+            List<dynamic> services = store.bookings.where((b) => b.date == booking.date && b.time == booking.time).toList();
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
-                        child: Card(
-                          color: colorsPalletes.secondaryColor,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+            // Calculando o total para a reserva
+            double totalReserva = services.fold(0, (sum, service) => sum + service.price);
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Card(
+                color: colorsPalletes.secondaryColor,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "$formattedDate | $formattedTime h",
+                        style: GoogleFonts.lato(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: colorsPalletes.nonaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ...services.map(
+                        (service) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        service.imageUrl,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      service.name,
+                                      style: GoogleFonts.lato(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 Text(
-                                  "${date} | ${_formatTimeForPostgres(bookings.first.time)}h",
+                                  'R\$ ${service.price.toStringAsFixed(2)}',
                                   style: GoogleFonts.lato(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
-                                    color: colorsPalletes.nonaryColor,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                ...bookings.map(
-                                  (booking) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                  booking.imageUrl,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                booking.name,
-                                                style: GoogleFonts.lato(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            'R\$ ${booking.price.toStringAsFixed(2)}',
-                                            style: GoogleFonts.lato(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 8),
-                                Divider(
-                                  color: colorsPalletes.nonaryColor,
-                                  thickness: 1,
-                                ),
-                                // Exibir o total do dia
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    'TOTAL: R\$ ${somaTotalDia.toStringAsFixed(2)}',
-                                    style: GoogleFonts.lato(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: colorsPalletes.nonaryColor,
-                                    ),
+                                    color: Colors.white,
                                   ),
                                 ),
                               ],
                             ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Divider(
+                        color: colorsPalletes.nonaryColor,
+                        thickness: 1,
+                      ),
+                      // Exibir o total da reserva
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'TOTAL: R\$ ${totalReserva.toStringAsFixed(2)}',
+                          style: GoogleFonts.lato(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: colorsPalletes.nonaryColor,
                           ),
                         ),
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          );
+              ),
+            );
+          },
+        ),
+      ),
+    ],
+  ),
+);
+
+          // return Padding(
+          //   padding: const EdgeInsets.symmetric(
+          //     horizontal: 8.0,
+          //     vertical: 4.0,
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: [
+          //       Text(
+          //         'Histórico de Agendamentos',
+          //         style: GoogleFonts.lato(
+          //           fontSize: 15,
+          //           fontWeight: FontWeight.bold,
+          //           color: colorsPalletes.nonaryColor,
+          //         ),
+          //       ),
+          //       const SizedBox(height: 8),
+          //       Expanded(
+          //         child: ListView(
+          //           children: groupedBookings.entries.map((entry) {
+          //             String date = entry.key;
+          //             List<dynamic> bookings = entry.value;
+
+          //             // Calculando o total para essa data
+          //             double somaTotalDia = bookings.fold(
+          //                 0, (sum, booking) => sum + booking.price);
+
+          //             return Padding(
+          //               padding: const EdgeInsets.only(bottom: 8.0),
+          //               child: Card(
+          //                 color: colorsPalletes.secondaryColor,
+          //                 child: Padding(
+          //                   padding: const EdgeInsets.all(8.0),
+          //                   child: Column(
+          //                     crossAxisAlignment: CrossAxisAlignment.start,
+          //                     children: [
+          //                       Text(
+          //                         "$date | ${_formatTimeForPostgres(bookings.first.time)}h",
+          //                         style: GoogleFonts.lato(
+          //                           fontSize: 15,
+          //                           fontWeight: FontWeight.bold,
+          //                           color: colorsPalletes.nonaryColor,
+          //                         ),
+          //                       ),
+          //                       const SizedBox(height: 8),
+          //                       ...bookings.map(
+          //                         (booking) {
+          //                           return Padding(
+          //                             padding: const EdgeInsets.symmetric(
+          //                                 vertical: 4.0),
+          //                             child: Row(
+          //                               mainAxisAlignment:
+          //                                   MainAxisAlignment.spaceBetween,
+          //                               children: [
+          //                                 Row(
+          //                                   children: [
+          //                                     CircleAvatar(
+          //                                       backgroundImage: NetworkImage(
+          //                                         booking.imageUrl,
+          //                                       ),
+          //                                     ),
+          //                                     const SizedBox(width: 8),
+          //                                     Text(
+          //                                       booking.name,
+          //                                       style: GoogleFonts.lato(
+          //                                         fontSize: 15,
+          //                                         fontWeight: FontWeight.bold,
+          //                                         color: Colors.white,
+          //                                       ),
+          //                                     ),
+          //                                   ],
+          //                                 ),
+          //                                 Text(
+          //                                   'R\$ ${booking.price.toStringAsFixed(2)}',
+          //                                   style: GoogleFonts.lato(
+          //                                     fontSize: 15,
+          //                                     fontWeight: FontWeight.bold,
+          //                                     color: Colors.white,
+          //                                   ),
+          //                                 ),
+          //                               ],
+          //                             ),
+          //                           );
+          //                         },
+          //                       ),
+          //                       const SizedBox(height: 8),
+          //                       Divider(
+          //                         color: colorsPalletes.nonaryColor,
+          //                         thickness: 1,
+          //                       ),
+          //                       // Exibir o total do dia
+          //                       Align(
+          //                         alignment: Alignment.centerRight,
+          //                         child: Text(
+          //                           'TOTAL: R\$ ${somaTotalDia.toStringAsFixed(2)}',
+          //                           style: GoogleFonts.lato(
+          //                             fontSize: 15,
+          //                             fontWeight: FontWeight.bold,
+          //                             color: colorsPalletes.nonaryColor,
+          //                           ),
+          //                         ),
+          //                       ),
+          //                     ],
+          //                   ),
+          //                 ),
+          //               ),
+          //             );
+          //           }).toList(),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // );
         },
       ),
     );

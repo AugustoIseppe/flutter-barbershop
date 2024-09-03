@@ -27,14 +27,71 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DatailsPageState extends State<DetailsPage> {
-  // String _selectedDate = '';
   BookingRepository bookingRepository = BookingRepository(client: HttpClient());
-  DateTime? _selectedDate;
   bool showServices = false;
   bool showDateService = false;
   List<bool>? _isCheckedList;
   List<String> _selectedServices = [];
+  DateTime? _selectedDate;
   DateTime? _selectTime;
+
+  DateTime? _confirmTime;
+  DateTime? _confirmDate;
+  String? _confirmId;
+  String? _confirmTimeId;
+  String? _confirmBarbershopId;
+
+  //* Função para exibir um SnackBar no topo da tela
+  void showTopSnackBar(BuildContext context, String message, Color colorIcon,
+      Color colorBackground, IconData icon) {
+    final overlay = Overlay.of(context);
+    final snackBar = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 50, // Distância do topo da tela
+        // left: MediaQuery.of(context).size.width * 0.1, // Margem esquerda
+        width: MediaQuery.of(context).size.width, // Largura do SnackBar
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            decoration: BoxDecoration(
+              color: colorBackground,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 12,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    icon,
+                    color: colorIcon,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  message,
+                  style: GoogleFonts.lato(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(snackBar);
+
+    // Remover o SnackBar após a duração especificada
+    Future.delayed(const Duration(seconds: 3)).then((_) => snackBar.remove());
+  }
 
   @override
   void initState() {
@@ -44,15 +101,23 @@ class _DatailsPageState extends State<DetailsPage> {
     final storeBooking = Provider.of<BookingStore>(context, listen: false);
     storeBooking.getBookingById(widget.userData['id'], widget.barbershop.id);
     // final storeSlots = Provider.of<SlotsStore>(context, listen: false);
-    // storeSlots.getSlots(widget.barbershop.id, _formatDateForPostgres(_selectedDate!));
   }
 
   String _formatDateForPostgres(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
   }
 
+  String _formatDateForView(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
+
   String _formatTimeForPostgres(DateTime date) {
     return DateFormat('HH:mm').format(date);
+  }
+
+  DateTime _formatDateForPostgres1(DateTime date) {
+    // Retorna um DateTime apenas com a data (hora, minuto, segundo e milissegundo zerados)
+    return DateTime(date.year, date.month, date.day);
   }
 
   _clearField() {
@@ -64,64 +129,7 @@ class _DatailsPageState extends State<DetailsPage> {
     });
   }
 
-  _showDialog(DateTime date, DateTime time) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: ColorsPalletes().primaryColor,
-          title: Text(
-            'Confirmar Agendamento?',
-            style: GoogleFonts.lato(
-              color: ColorsPalletes().denaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'Reserva para ${_formatDateForPostgres(date)} às ${_formatTimeForPostgres(time)}h',
-            style: GoogleFonts.lato(
-              color: ColorsPalletes().nonaryColor,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                _clearField();
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Não',
-                style: GoogleFonts.lato(
-                  color: ColorsPalletes().quaternaryColor,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                final userId = widget.userData['id'];
-                print('ID USUÁRIO: $userId');
-                print(_selectedDate);
-                print(
-                    "LISTAR DE SERVIÇOS BOTAO CONFIRMAR AGENDAMENTO: $_selectedServices");
-                await bookingRepository.createBooking(
-                  userId,
-                  _selectedServices,
-                  _selectedDate!,
-                  _selectTime!,
-                );
-              },
-              child: Text(
-                'Sim',
-                style: GoogleFonts.lato(
-                  color: ColorsPalletes().quaternaryColor,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   // void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
   //   setState(() {
@@ -148,6 +156,85 @@ class _DatailsPageState extends State<DetailsPage> {
   // }
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<SlotsStore>(context, listen: false);
+      _showDialog(DateTime date, DateTime time) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: ColorsPalletes().primaryColor,
+          title: Text(
+            'Confirmar Agendamento?',
+            style: GoogleFonts.lato(
+              color: ColorsPalletes().denaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            'Reserva para ${_formatDateForView(date)} às ${_formatTimeForPostgres(time)}h',
+            style: GoogleFonts.lato(
+              color: ColorsPalletes().nonaryColor,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                _clearField();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Não',
+                style: GoogleFonts.lato(
+                  color: ColorsPalletes().quaternaryColor,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                final userId = widget.userData['id'];
+                await bookingRepository.createBooking(
+                  userId,
+                  _selectedServices,
+                  _confirmDate!,
+                  _confirmTime!,
+                );
+                try {
+                  print('ID: $_confirmId');
+                  print('TimeID: $_confirmTimeId');
+                  print('Date: ${_formatDateForPostgres(_confirmDate!)}');
+                  print('BarbershopID: $_confirmBarbershopId');
+
+                  store.updateSlots(
+                    _confirmId!,
+                    _confirmTimeId!,
+                    _confirmDate!.toIso8601String(),
+                    _confirmBarbershopId!,
+                  );
+                } catch (e) {
+                  throw Exception('Erro ao atualizar o slot: $e');
+                }
+                showTopSnackBar(
+                  context,
+                  'Agendamento realizado com sucesso!',
+                  Colors.greenAccent.shade700,
+                  Colors.greenAccent.shade700,
+                  Icons.check_circle,
+                );
+                _clearField();
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Sim',
+                style: GoogleFonts.lato(
+                  color: ColorsPalletes().quaternaryColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
     final ColorsPalletes colorsPalletes = ColorsPalletes();
 
     return SafeArea(
@@ -165,7 +252,6 @@ class _DatailsPageState extends State<DetailsPage> {
                   );
                 }
                 if (store.error.isNotEmpty) {
-                  print(store.error);
                   return Center(
                     child: Text(store.error),
                   );
@@ -247,7 +333,34 @@ class _DatailsPageState extends State<DetailsPage> {
                             horizontal: 20, vertical: 10),
                       ),
                       onPressed: () async {
-                        _showDialog(_selectedDate!, _selectTime!);
+                        if (_selectedServices.isEmpty) {
+                          showTopSnackBar(
+                            context,
+                            'Selecione ao menos um serviço!',
+                            Colors.redAccent.shade700,
+                            Colors.redAccent.shade700,
+                            Icons.error,
+                          );
+                        } else if (_selectedDate == null) {
+                          showTopSnackBar(
+                            context,
+                            'Selecione uma data!',
+                            Colors.redAccent.shade700,
+                            Colors.redAccent.shade700,
+                            Icons.calendar_month,
+                          );
+                        } else if (_confirmTime == null) {
+                          showTopSnackBar(
+                            context,
+                            'Selecione um horário!',
+                            Colors.redAccent.shade700,
+                            Colors.redAccent.shade700,
+                            Icons.time_to_leave,
+                          );
+                        }
+                        _showDialog(_confirmDate!, _confirmTime!);
+                        print('Data: ${_formatDateForPostgres(_confirmDate!)}');
+                        print('Hora: ${_formatTimeForPostgres(_confirmTime!)}');
                       },
                       child: Text(
                         'Confirmar Agendamento',
@@ -389,14 +502,38 @@ class _DatailsPageState extends State<DetailsPage> {
                       size: 20,
                     ),
                     const SizedBox(width: 15),
-                    Text(
-                      'Selecione os serviços',
-                      style: GoogleFonts.lato(
-                        color: colorsPalletes.nonaryColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    _selectedServices.isEmpty
+                        ? Text(
+                            'Selecione os serviços',
+                            style: GoogleFonts.lato(
+                              color: colorsPalletes.nonaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )
+                        : SizedBox(
+                            width: 280,
+                            child: Text(
+                              _selectedServices.map((serviceId) {
+                                final service =
+                                    Provider.of<DetailsStore>(context)
+                                        .barbershopsServices
+                                        .firstWhere((element) =>
+                                            element.id == serviceId);
+                                return service.name;
+                              }).join(
+                                  ', '), // Une os nomes com vírgula e espaço
+                              style: GoogleFonts.lato(
+                                color: colorsPalletes.nonaryColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
                   ],
                 ),
                 const SizedBox(width: 10),
@@ -439,8 +576,8 @@ class _DatailsPageState extends State<DetailsPage> {
                     ),
                     const SizedBox(width: 15),
                     Text(
-                      _selectedDate != null
-                          ? _formatDateForPostgres(_selectedDate!)
+                      _selectedDate != null && _confirmTime != null
+                          ? '${_formatDateForView(_selectedDate!)} | ${_formatTimeForPostgres(_confirmTime!)}h'
                           : 'Escolha a melhor data',
                       style: GoogleFonts.lato(
                         color: colorsPalletes.nonaryColor,
@@ -499,12 +636,12 @@ class _DatailsPageState extends State<DetailsPage> {
               children: [
                 if (_isCheckedList!.any((element) => element))
                   Text(
-                    _selectedDate == null
-                        ? 'Selecione a data do agendamento'
-                        : 'Seus serviços selecionados para o dia ${_formatDateForPostgres(_selectedDate!)} ',
+                    _selectedDate != null && _confirmTime != null
+                        ? 'Data: ${_formatDateForView(_selectedDate!)} | Horário: ${_formatTimeForPostgres(_confirmTime!)}h'
+                        : 'Escolha a melhor data',
                     style: GoogleFonts.lato(
                       color: colorsPalletes.nonaryColor,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -612,7 +749,7 @@ class _DatailsPageState extends State<DetailsPage> {
     ColorsPalletes colorsPalletes = ColorsPalletes();
     return Container(
       height: 750,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       alignment: Alignment.center,
       child: Card(
         elevation: 20,
@@ -649,6 +786,7 @@ class _DatailsPageState extends State<DetailsPage> {
             ),
             SfDateRangePicker(
               headerStyle: DateRangePickerHeaderStyle(
+                
                 backgroundColor: colorsPalletes.secondaryColor,
                 textStyle: GoogleFonts.lato(
                   color: colorsPalletes.nonaryColor,
@@ -658,6 +796,7 @@ class _DatailsPageState extends State<DetailsPage> {
               ),
               // Personalizando as cores do calendário
               monthCellStyle: DateRangePickerMonthCellStyle(
+                
                 textStyle: GoogleFonts.lato(
                   color: colorsPalletes.nonaryColor, // Cor das fontes das datas
                   fontSize: 15,
@@ -696,12 +835,24 @@ class _DatailsPageState extends State<DetailsPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                dayFormat:
-                    'EEE', // Formato dos dias da semana (ex.: Mon, Tue, ...)
+                dayFormat:'EEE', // Formato dos dias da semana (ex.: Mon, Tue, ...)
               ),
-              backgroundColor:
-                  colorsPalletes.secondaryColor, // Cor de fundo do calendário
+              backgroundColor: colorsPalletes.secondaryColor, // Cor de fundo do calendário
+              enablePastDates: true,
+              endRangeSelectionColor: colorsPalletes.primaryColor,
+              yearCellStyle: DateRangePickerYearCellStyle(
+                textStyle: GoogleFonts.lato(
+                  color: colorsPalletes.nonaryColor, // Cor das fontes do ano
+                  fontSize: 15,
+                ),
+              ),
+              rangeSelectionColor: colorsPalletes.primaryColor,
               selectionColor: colorsPalletes.primaryColor,
+              rangeTextStyle: GoogleFonts.lato(
+                color: colorsPalletes.nonaryColor, // Cor das fontes do intervalo de datas
+                fontSize: 15,
+              ),
+
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 setState(() {
                   _selectedDate = args.value as DateTime?;
@@ -743,103 +894,193 @@ class _DatailsPageState extends State<DetailsPage> {
                 const SizedBox(height: 10),
                 if (_selectedDate != null)
                   Container(
-                      height: 200,
-                      width: 330,
-                      color: colorsPalletes.secondaryColor,
-                      child: Consumer<SlotsStore>(
-                        builder: (context, store, child) {
-                          if (store.isLoading) {
-                            return Center(
-                              child: SpinKitFadingCircle(
-                                color: colorsPalletes.septenaryColor,
-                                size: 50.0,
+                    height: 320,
+                    width: 330,
+                    color: colorsPalletes.secondaryColor,
+                    child: Consumer<SlotsStore>(
+                      builder: (context, store, child) {
+                        if (store.isLoading) {
+                          return Center(
+                            child: SpinKitFadingCircle(
+                              color: colorsPalletes.septenaryColor,
+                              size: 50.0,
+                            ),
+                          );
+                        }
+                        if (store.error.isNotEmpty) {
+                          return Center(
+                            child: Text(store.error),
+                          );
+                        }
+                        if (store.slots.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'Nenhum horário disponível',
+                              style: GoogleFonts.lato(
+                                color: colorsPalletes.nonaryColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          }
-                          if (store.error.isNotEmpty) {
-                            print(store.error);
-                            return Center(
-                              child: Text(store.error),
-                            );
-                          }
-                          if (store.slots.isEmpty) {
-                            return Center(
-                              child: Text(
-                                'Nenhum horário disponível',
-                                style: GoogleFonts.lato(
-                                  color: colorsPalletes.nonaryColor,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: GridView.builder(
+                                itemCount: store.slots.length,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10,
+                                  childAspectRatio: 3,
                                 ),
-                              ),
-                            );
-                          }
-                          return GridView.builder(
-                            itemCount: store.slots.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10,
-                                    childAspectRatio: 3),
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectTime = store.slots[index].time;
-                                  });
-                                  print('Horário selecionado: ${store.slots[index].time}');
-                                  print("Id do horário selecionado: ${store.slots[index].id}");
-                                  print("Timeid do horário selecionado: ${store.slots[index].timeid}");
-                                  print("Isavailable do horário selecionado: ${store.slots[index].isavailable}");
-                                  print("Baberid do horário selecionado: ${store.slots[index].barbershopid}");
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: colorsPalletes.secondaryColor,
-                                    border: Border.all(
-                                      color: colorsPalletes.nonaryColor,
-                                      width: 0.5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      _formatTimeForPostgres(
-                                          store.slots[index].time),
-                                      style: GoogleFonts.lato(
-                                        color: colorsPalletes.nonaryColor,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                itemBuilder: (context, index) {
+                                  bool isSelected =
+                                      store.selectedSlotIndex == index;
+                                  return GestureDetector(
+                                    onTap: () {
+                                      store.setSelectedSlotIndex(index);
+                                      print(store.selectedSlotIndex);
+                                      print(store.slots[index].timeid);
+                                      // Atualiza o índice do slot selecionado
+                                      // store.setSelectedSlotIndex(index);
+                                      // DateTime formattedDate =
+                                      //     _formatDateForPostgres1(
+                                      //         _selectedDate!);
+                                      // setState(() {
+                                      //   _selectTime = store.slots[index].time;
+                                      //   isSelected = !isSelected;
+                                      // });
+                                      // print(isSelected);
+                                      // final id = store.slots[index].id;
+                                      // final barbershopid =
+                                      //     store.slots[index].barbershopid;
+                                      // final timeid = store.slots[index].timeid;
+                                      // final date = formattedDate;
+                                      // print('ID: $id');
+                                      // print('BarbershopID: $barbershopid');
+                                      // print('TimeID: $timeid');
+                                      // print('Date: $date');
+                                      // print(
+                                      //     'Time: ${_formatTimeForPostgres(store.slots[index].time)}');
+                                      // // Id do horário selecionado
+                                      // try {
+                                      //   store.updateSlots(id, timeid, date.toIso8601String(), barbershopid);
+                                      // } catch (e) {
+                                      //   throw Exception(
+                                      //       'Erro ao atualizar o slot: $e');
+                                      // }
+
+                                      // print('Horário selecionado: ${store.slots[index].time}');
+                                      // print('Horário selecionado formatado: ${_formatTimeForPostgres(store.slots[index].time)}');
+                                      // print("Isavailable do horário selecionado: ${store.slots[index].isavailable}");
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? colorsPalletes.primaryColor
+                                            : colorsPalletes.secondaryColor,
+                                        border: Border.all(
+                                          color: colorsPalletes.nonaryColor,
+                                          width: 0.5,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          _formatTimeForPostgres(
+                                              store.slots[index].time),
+                                          style: GoogleFonts.lato(
+                                            color: colorsPalletes.nonaryColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     ),
+                                  );
+                                },
+                              ),
+                            ),
+                            // const SizedBox(height: 10),
+                            SizedBox(
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10.0, bottom: 10),
+                                child: FilledButton(
+                                  style: FilledButton.styleFrom(
+                                      backgroundColor:
+                                          colorsPalletes.primaryColor,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
+                                      fixedSize: const Size(300, 40)),
+                                  onPressed: () {
+                                    setState(() {
+                                      showDateService = !showDateService;
+                                    });
+
+                                    //* Lógica para alterar o valor do slot
+                                    if (store.selectedSlotIndex != null) {
+                                      final selectedSlot =
+                                          store.slots[store.selectedSlotIndex!];
+                                      DateTime formattedDate =
+                                          _formatDateForPostgres1(
+                                              _selectedDate!);
+
+                                      // Chama o método updateSlots com os dados do slot selecionado
+                                      // store.updateSlots(
+                                      //   selectedSlot.id,
+                                      //   selectedSlot.timeid,
+                                      //   formattedDate.toIso8601String(),
+                                      //   selectedSlot.barbershopid,
+                                      // );
+                                      print(
+                                          'Horário selecionado: ${_formatTimeForPostgres(selectedSlot.time)}');
+                                      print(
+                                          "Data selecionada: ${_formatDateForPostgres(_selectedDate!)}");
+
+                                      setState(() {
+                                        showDateService = !showDateService;
+                                        _confirmDate = formattedDate;
+                                        _confirmTime = selectedSlot.time;
+                                        _confirmId = selectedSlot.id;
+                                        _confirmTimeId = selectedSlot.timeid;
+                                        _confirmBarbershopId = selectedSlot.barbershopid;
+                                      });
+
+                                      // Mensagem de confirmação ou ação adicional após a atualização
+                                      // print('Horário atualizado com sucesso!');
+                                      // showTopSnackBar(
+                                      //   context,
+                                      //   'Horário Selecionado: ${_formatTimeForPostgres(_confirmTime!)}h!',
+                                      //    Colors.greenAccent.shade700,
+                                      //    Colors.greenAccent.shade700,
+                                      //    Icons.check_circle,
+                                      // );
+                                      setState(() {
+                                        showDateService = !showDateService;
+                                      });
+                                    } else {
+                                      // Exibir mensagem de erro ou notificação se nenhum horário estiver selecionado
+                                      // print('Nenhum horário selecionado.');
+                                    }
+                                  },
+                                  child: Text(
+                                    'Confirmar',
+                                    style: TextStyle(
+                                        color: colorsPalletes.nonaryColor),
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      )),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(
-                        backgroundColor: colorsPalletes.primaryColor,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        fixedSize: Size(300, 40)),
-                    onPressed: () {
-                      setState(() {
-                        showDateService = !showDateService;
-                      });
-                    },
-                    child: Text(
-                      'Confirmar',
-                      style: TextStyle(color: colorsPalletes.nonaryColor),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-                ),
               ],
             ),
           ],
@@ -972,6 +1213,8 @@ class _DatailsPageState extends State<DetailsPage> {
 
                       if (!_selectedServices.contains(service.id)) {
                         _selectedServices.add(service.id);
+                      } else {
+                        _selectedServices.remove(service.id);
                       }
 
                       debugPrint(
@@ -992,12 +1235,11 @@ class _DatailsPageState extends State<DetailsPage> {
                 backgroundColor: colorsPalletes.primaryColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                fixedSize: Size(300, 40)),
+                fixedSize: const Size(300, 40)),
             onPressed: () {
               setState(() {
                 showServices = !showServices;
               });
-              print("LISTA DE SERVIÇOS BOTAO CONFIRMAR: $_selectedServices");
             },
             child: Text(
               'Confirmar',

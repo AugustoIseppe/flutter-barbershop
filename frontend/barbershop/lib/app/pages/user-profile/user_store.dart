@@ -25,10 +25,6 @@ class UserStore with ChangeNotifier {
       );
 
       users = result;  // Aqui, 'result' deve ser um objeto, não uma lista
-      print("USERS - USERSTOREE: $users");
-      print("TIPO USERS - USERSTORE: ${users.runtimeType}");
-      print("RESULT - USERSTORE: $result");
-      print("TIPO RESULT - USERSTORE: ${result.runtimeType}");
       
       error = '';
       return users;
@@ -47,10 +43,6 @@ class UserStore with ChangeNotifier {
       final result = await repository.updateImageUser(id, imageUrl);
 
       users = result;  // Aqui, 'result' deve ser um objeto, não uma lista
-      print("USERS - USERSTORE: $users");
-      print("TIPO USERS - USERSTORE: ${users.runtimeType}");
-      print("RESULT - USERSTORE: $result");
-      print("TIPO RESULT - USERSTORE: ${result.runtimeType}");
       
       error = '';
       return users;
