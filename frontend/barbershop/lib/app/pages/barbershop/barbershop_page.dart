@@ -1,3 +1,5 @@
+import 'package:barbershop/app/data/auth/auth.dart';
+import 'package:barbershop/app/pages/details/details_page.dart';
 import 'package:barbershop/app/pages/home/barbershop_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -23,6 +25,7 @@ class _BarbershopPageState extends State<BarbershopPage> {
   @override
   Widget build(BuildContext context) {
     final ColorsPalletes colorsPallete = ColorsPalletes();
+    final auth = Provider.of<Auth>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -92,38 +95,48 @@ class _BarbershopPageState extends State<BarbershopPage> {
                         itemCount: store.barbershops.length,
                         itemBuilder: (context, index) {
                           final barbershop = store.barbershops[index];
-                          return Card(
-                            color: index.isOdd
-                                ? colorsPallete.secondaryColor
-                                : colorsPallete.primaryColor,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                radius: 30,
-                                backgroundImage:
-                                    NetworkImage(barbershop.imageUrl),
-                              ),
-                              title: Text(
-                                barbershop.name,
-                                style: GoogleFonts.aclonica(
-                                  textStyle: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: colorsPallete.nonaryColor,
+                          return GestureDetector(
+                            onTap: () {
+                             Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => DetailsPage(
+                                  userData: auth.userData,
+                                  barbershop: barbershop,
+                                ),
+                              ));
+                            },
+                            child: Card(
+                              color: index.isOdd
+                                  ? colorsPallete.secondaryColor
+                                  : colorsPallete.primaryColor,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage:
+                                      NetworkImage(barbershop.imageUrl),
+                                ),
+                                title: Text(
+                                  barbershop.name,
+                                  style: GoogleFonts.aclonica(
+                                    textStyle: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: colorsPallete.nonaryColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                barbershop.address,
-                                style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                      color: colorsPallete.nonaryColor),
+                                subtitle: Text(
+                                  barbershop.address,
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w900,
+                                        color: colorsPallete.nonaryColor),
+                                  ),
                                 ),
-                              ),
-                              trailing: const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
+                                trailing: const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           );
