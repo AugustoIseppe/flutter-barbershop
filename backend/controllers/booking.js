@@ -72,6 +72,7 @@ export const getBookingById = async (request, response) => {
             WHERE 
                 "Booking"."userId" = ${id}
                 AND "BarbershopService"."barbershopId" = ${barbershopId}
+                ORDER BY "Booking"."date" DESC
         `;
 
         response.status(200).json(bookings);

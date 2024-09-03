@@ -11,7 +11,8 @@ FROM "AvailableSlots" AS a
 JOIN "DefaultSlots" AS d ON a.timeId = d.id
 WHERE a.barbershopId = ${barbershopId}
   AND a.date = ${date}
-  AND a.isAvailable = TRUE;
+    AND a.isAvailable = TRUE
+    ORDER BY d.time;
         `;
         response.status(200).json(query);
     } catch (error) {
@@ -19,6 +20,60 @@ WHERE a.barbershopId = ${barbershopId}
         response.status(500).json({ message: 'Erro ao buscar slots de horário' });
     }
 };
+
+export const updateSlot = async (request, response) => {
+    try {
+        const { id, timeid, date, barbershopid } = request.body;
+
+        // Validação básica para garantir que todos os campos necessários estão presentes
+        if (!id || !timeid || !date || !barbershopid) {
+            console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barbershopid:', barbershopid);
+            return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barbershopid) são necessários.' });
+        }
+        console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barbershopid:', barbershopid);
+
+        // Atualizar o slot
+        const updateQuery = await sql`
+            UPDATE "AvailableSlots"
+            SET "isavailable" = FALSE
+            WHERE "id" = ${id}
+              AND "timeid" = ${timeid}
+              AND "date" = ${date}
+              AND "barbershopid" = ${barbershopid}
+              AND "isavailable" = TRUE
+            RETURNING *;
+        `;
+
+        if (updateQuery.count === 0) {
+            return response.status(404).json({ message: 'Slot de horário não encontrado ou já não está disponível' });
+        }
+
+        // Buscar o valor do time relacionado ao timeid
+        const timeQuery = await sql`
+            SELECT "time" 
+            FROM "DefaultSlots"
+            WHERE "id" = ${timeid};
+        `;
+
+        if (timeQuery.count === 0) {
+            return response.status(404).json({ message: 'Time associado ao timeid não encontrado.' });
+        }
+
+        // Combinar os resultados e retornar a resposta
+        const result = {
+            ...updateQuery[0], // Dados do slot atualizado
+            time: timeQuery[0].time // Valor do time obtido da tabela DefaultSlots
+        };
+
+        response.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ message: 'Erro ao atualizar slot de horário' });
+    }
+};
+
+
+
 
 
 export const createSlot = async (request, response) => {
@@ -70,37 +125,7 @@ export const createAvailableSlot = async (request, response) => {
     }
 };
 
-export const updateSlot = async (request, response) => {
-    try {
-        const { id, timeId, date, barbershopId } = request.body;
 
-        // Validação básica para garantir que todos os campos necessários estão presentes
-        if (!id || !timeId || !date || !barbershopId) {
-            return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barbershopid) são necessários.' });
-        }
-
-        // Consulta SQL para atualizar a coluna isAvailable
-        const query = await sql`
-            UPDATE "AvailableSlots"
-            SET "isavailable" = FALSE
-            WHERE "id" = ${id}
-              AND "timeid" = ${timeId}
-              AND "date" = ${date}
-              AND "barbershopid" = ${barbershopId}
-              AND "isavailable" = TRUE
-            RETURNING *;
-        `;
-
-        if (query.count === 0) {
-            return response.status(404).json({ message: 'Slot de horário não encontrado ou já não está disponível' });
-        }
-
-        response.status(200).json({ message: 'Slot de horário atualizado com sucesso', data: query });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: 'Erro ao atualizar slot de horário' });
-    }
-};
 
 
 // UPDATE "DefaultSlots"
