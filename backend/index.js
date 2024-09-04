@@ -5,6 +5,7 @@ import barberServiceRouter from './routes/barbershop-services.js';
 import bookingsRouter from './routes/bookings.js';
 import slotsRouter from './routes/default-slots.js';
 import availableSlots from './routes/default-slots.js';
+import barber from './routes/barbershop-barbers.js';
 import cors from 'cors'; // Importação do CORS: Cross-Origin Resource Sharing -> Permite que um site acesse recursos de outro site mesmo estando em domínios diferentes
 import multer from 'multer'; // Importação do multer: Middleware para upload de arquivos
 import { storage } from './multerConfig.js'; // Importação da configuração do multer
@@ -22,6 +23,7 @@ app.use('/', barberServiceRouter);
 app.use('/', bookingsRouter);
 app.use('/', slotsRouter);
 app.use('/', availableSlots);
+app.use('/', barber);
 app.use('/users/uploads', express.static('uploads'));
 
 
