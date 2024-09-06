@@ -6,4 +6,5 @@ class Routes {
   static const bookingPage = '/booking-page';
   static const barbershopPage = '/barbershop-page';
   static const userProfile = '/user-profile';
+  static const barberDetails = '/barber-details';
 }

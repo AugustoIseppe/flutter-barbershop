@@ -2,6 +2,7 @@ import "package:barbershop/app/data/auth/auth.dart";
 import "package:barbershop/app/data/auth/auth_check.dart";
 import "package:barbershop/app/data/model/barbershop_model.dart";
 import "package:barbershop/app/data/repositories/babershop_service_repository.dart";
+import "package:barbershop/app/data/repositories/barbershop_barber_repository.dart";
 import "package:barbershop/app/data/repositories/barbershop_repository.dart";
 import "package:barbershop/app/data/repositories/booking_repository.dart";
 import "package:barbershop/app/data/repositories/slots_repository.dart";
@@ -10,6 +11,8 @@ import "package:barbershop/app/data/repositories/user_repository.dart";
 import "package:barbershop/app/pages/barbershop/barbershop_page.dart";
 import "package:barbershop/app/pages/booking/booking_page.dart";
 import "package:barbershop/app/pages/booking/booking_store.dart";
+import "package:barbershop/app/pages/details/barber_details.dart";
+import "package:barbershop/app/pages/details/barber_store.dart";
 import "package:barbershop/app/pages/details/details.store.dart";
 import "package:barbershop/app/pages/details/slots_store.dart";
 import "package:barbershop/app/pages/home/barbershop_store.dart";
@@ -70,6 +73,13 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => BarberStore(
+            repository: BarbershopBarberRepository(
+              client: HttpClient(),
+            ),
+          ),
+        ),
       ],
       child: MaterialApp(
         title: "Barbershop Ballan'aibs",
@@ -89,7 +99,8 @@ class MyApp extends StatelessWidget {
               const BookingPage(userData: {}, barbershopData: {}),
           Routes.barbershopPage: (context) => const BarbershopPage(),
           Routes.userProfile: (context) => const UserProfile(),
-        },
+          Routes.barberDetails: (context) => BarberDetails(barber: {}),
+          },
       ),
     );
   }

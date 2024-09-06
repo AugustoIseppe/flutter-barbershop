@@ -3,8 +3,10 @@ import 'package:barbershop/app/data/model/barbershop_model.dart';
 import 'package:barbershop/app/data/repositories/booking_repository.dart';
 import 'package:barbershop/app/pages/booking/booking_page.dart';
 import 'package:barbershop/app/pages/booking/booking_store.dart';
+import 'package:barbershop/app/pages/details/barber_store.dart';
 import 'package:barbershop/app/pages/details/details.store.dart';
 import 'package:barbershop/app/pages/details/slots_store.dart';
+import 'package:barbershop/app/pages/details/widgets/barbers.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -96,12 +98,29 @@ class _DatailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     super.initState();
-    final store = Provider.of<DetailsStore>(context, listen: false);
-    store.getBarbershopsWithServices(widget.barbershop.id.toString());
-    final storeBooking = Provider.of<BookingStore>(context, listen: false);
-    storeBooking.getBookingById(widget.userData['id'], widget.barbershop.id);
-    // final storeSlots = Provider.of<SlotsStore>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final store = Provider.of<DetailsStore>(context, listen: false);
+      store.getBarbershopsWithServices(widget.barbershop.id.toString());
+
+      final storeBooking = Provider.of<BookingStore>(context, listen: false);
+      storeBooking.getBookingById(widget.userData['id'], widget.barbershop.id);
+
+      final storeBarbers = Provider.of<BarberStore>(context, listen: false);
+      storeBarbers.getBarbers(widget.barbershop.id);
+    });
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   final store = Provider.of<DetailsStore>(context, listen: false);
+  //   store.getBarbershopsWithServices(widget.barbershop.id.toString());
+  //   final storeBooking = Provider.of<BookingStore>(context, listen: false);
+  //   storeBooking.getBookingById(widget.userData['id'], widget.barbershop.id);
+  //   // final storeSlots = Provider.of<SlotsStore>(context, listen: false);
+  //   final storeBarbers = Provider.of<BarberStore>(context, listen: false);
+  //   storeBarbers.getBarbers(widget.barbershop.id);
+  // }
 
   String _formatDateForPostgres(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
@@ -129,8 +148,6 @@ class _DatailsPageState extends State<DetailsPage> {
     });
   }
 
-
-
   // void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
   //   setState(() {
   //     if (args.value is DateTime) {
@@ -157,91 +174,92 @@ class _DatailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     final store = Provider.of<SlotsStore>(context, listen: false);
-      _showDialog(DateTime date, DateTime time) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: ColorsPalletes().primaryColor,
-          title: Text(
-            'Confirmar Agendamento?',
-            style: GoogleFonts.lato(
-              color: ColorsPalletes().denaryColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'Reserva para ${_formatDateForView(date)} às ${_formatTimeForPostgres(time)}h',
-            style: GoogleFonts.lato(
-              color: ColorsPalletes().nonaryColor,
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                _clearField();
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Não',
-                style: GoogleFonts.lato(
-                  color: ColorsPalletes().quaternaryColor,
-                ),
+    _showDialog(DateTime date, DateTime time) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: ColorsPalletes().primaryColor,
+            title: Text(
+              'Confirmar Agendamento?',
+              style: GoogleFonts.lato(
+                color: ColorsPalletes().denaryColor,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            TextButton(
-              onPressed: () async {
-                final userId = widget.userData['id'];
-                await bookingRepository.createBooking(
-                  userId,
-                  _selectedServices,
-                  _confirmDate!,
-                  _confirmTime!,
-                );
-                try {
-                  print('ID: $_confirmId');
-                  print('TimeID: $_confirmTimeId');
-                  print('Date: ${_formatDateForPostgres(_confirmDate!)}');
-                  print('BarbershopID: $_confirmBarbershopId');
-
-                  store.updateSlots(
-                    _confirmId!,
-                    _confirmTimeId!,
-                    _confirmDate!.toIso8601String(),
-                    _confirmBarbershopId!,
+            content: Text(
+              'Reserva para ${_formatDateForView(date)} às ${_formatTimeForPostgres(time)}h',
+              style: GoogleFonts.lato(
+                color: ColorsPalletes().nonaryColor,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  _clearField();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Não',
+                  style: GoogleFonts.lato(
+                    color: ColorsPalletes().quaternaryColor,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final userId = widget.userData['id'];
+                  await bookingRepository.createBooking(
+                    userId,
+                    _selectedServices,
+                    _confirmDate!,
+                    _confirmTime!,
                   );
-                } catch (e) {
-                  throw Exception('Erro ao atualizar o slot: $e');
-                }
-                showTopSnackBar(
-                  context,
-                  'Agendamento realizado com sucesso!',
-                  Colors.greenAccent.shade700,
-                  Colors.greenAccent.shade700,
-                  Icons.check_circle,
-                );
-                _clearField();
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Sim',
-                style: GoogleFonts.lato(
-                  color: ColorsPalletes().quaternaryColor,
+                  try {
+                    print('ID: $_confirmId');
+                    print('TimeID: $_confirmTimeId');
+                    print('Date: ${_formatDateForPostgres(_confirmDate!)}');
+                    print('BarbershopID: $_confirmBarbershopId');
+
+                    store.updateSlots(
+                      _confirmId!,
+                      _confirmTimeId!,
+                      _confirmDate!.toIso8601String(),
+                      _confirmBarbershopId!,
+                    );
+                  } catch (e) {
+                    throw Exception('Erro ao atualizar o slot: $e');
+                  }
+                  showTopSnackBar(
+                    context,
+                    'Agendamento realizado com sucesso!',
+                    Colors.greenAccent.shade700,
+                    Colors.greenAccent.shade700,
+                    Icons.check_circle,
+                  );
+                  _clearField();
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Sim',
+                  style: GoogleFonts.lato(
+                    color: ColorsPalletes().quaternaryColor,
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+            ],
+          );
+        },
+      );
+    }
+
     final ColorsPalletes colorsPalletes = ColorsPalletes();
 
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: colorsPalletes.primaryColor,
-          foregroundColor: colorsPalletes.nonaryColor,
+          foregroundColor: colorsPalletes.white,
           centerTitle: true,
           actions: [
             Consumer<BookingStore>(
@@ -317,6 +335,8 @@ class _DatailsPageState extends State<DetailsPage> {
                 children: [
                   Image.network(widget.barbershop.imageUrl),
                   _buildBarbershopInfo(colorsPalletes),
+                  _buildSectionDivider(colorsPalletes),
+                  const Barbers(),
                   _buildSectionDivider(colorsPalletes),
                   _buildAboutSection(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
@@ -786,7 +806,6 @@ class _DatailsPageState extends State<DetailsPage> {
             ),
             SfDateRangePicker(
               headerStyle: DateRangePickerHeaderStyle(
-                
                 backgroundColor: colorsPalletes.secondaryColor,
                 textStyle: GoogleFonts.lato(
                   color: colorsPalletes.nonaryColor,
@@ -796,7 +815,6 @@ class _DatailsPageState extends State<DetailsPage> {
               ),
               // Personalizando as cores do calendário
               monthCellStyle: DateRangePickerMonthCellStyle(
-                
                 textStyle: GoogleFonts.lato(
                   color: colorsPalletes.nonaryColor, // Cor das fontes das datas
                   fontSize: 15,
@@ -835,9 +853,11 @@ class _DatailsPageState extends State<DetailsPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                dayFormat:'EEE', // Formato dos dias da semana (ex.: Mon, Tue, ...)
+                dayFormat:
+                    'EEE', // Formato dos dias da semana (ex.: Mon, Tue, ...)
               ),
-              backgroundColor: colorsPalletes.secondaryColor, // Cor de fundo do calendário
+              backgroundColor:
+                  colorsPalletes.secondaryColor, // Cor de fundo do calendário
               enablePastDates: true,
               endRangeSelectionColor: colorsPalletes.primaryColor,
               yearCellStyle: DateRangePickerYearCellStyle(
@@ -849,7 +869,8 @@ class _DatailsPageState extends State<DetailsPage> {
               rangeSelectionColor: colorsPalletes.primaryColor,
               selectionColor: colorsPalletes.primaryColor,
               rangeTextStyle: GoogleFonts.lato(
-                color: colorsPalletes.nonaryColor, // Cor das fontes do intervalo de datas
+                color: colorsPalletes
+                    .nonaryColor, // Cor das fontes do intervalo de datas
                 fontSize: 15,
               ),
 
@@ -1048,7 +1069,8 @@ class _DatailsPageState extends State<DetailsPage> {
                                         _confirmTime = selectedSlot.time;
                                         _confirmId = selectedSlot.id;
                                         _confirmTimeId = selectedSlot.timeid;
-                                        _confirmBarbershopId = selectedSlot.barbershopid;
+                                        _confirmBarbershopId =
+                                            selectedSlot.barbershopid;
                                       });
 
                                       // Mensagem de confirmação ou ação adicional após a atualização

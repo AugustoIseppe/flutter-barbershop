@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/barbershops', getBarbershops);
 router.get('/barbershops/:id', getBarbershopsWithServices);
-router.post('/barbershops', upload.single("image"), createBarbershop);
+router.post('/barbershops', upload.single("imageUrl"), createBarbershop); //imageUrl é o nome da tabela do banco de dados
+ 
 
 export default router;
