@@ -53,3 +53,17 @@ export const createBarbershop = async (request, response) => {
 };
 
 
+export const deleteBarbershop = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = await sql`
+            DELETE FROM "Barbershop" 
+            WHERE id = ${id} 
+            RETURNING *;
+        `;
+        res.status(200).json({ message: 'Barberaria deletada com sucesso' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro ao deletar barbebaria' });
+    }
+}
