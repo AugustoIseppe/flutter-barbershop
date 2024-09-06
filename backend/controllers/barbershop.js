@@ -19,8 +19,8 @@ export const getBarbershopsWithServices = async (request, response) => {
         const { id } = request.params;
         const barbershop = await sql`
         SELECT "BarbershopService".*
-FROM "BarbershopService"
-WHERE "BarbershopService"."barbershopId" = ${id};
+        FROM "BarbershopService"
+        WHERE "BarbershopService"."barbershopId" = ${id};
         `;
 
         console.log(barbershop);
@@ -36,11 +36,11 @@ export const createBarbershop = async (request, response) => {
     const uuid = randomUUID();
     console.log(randomUUID);
     try {
-        const { name, address, phones, description, imageUrl } = request.body;
+        const { name, address, phones, description } = request.body;
 
         const query = await sql`
             INSERT INTO "Barbershop" (id, name, address, phones, description, "imageUrl") 
-            VALUES (${uuid}, ${name}, ${address}, ${phones}, ${description}, ${imageUrl}) 
+            VALUES (${uuid}, ${name}, ${address}, ${phones}, ${description}, ${request.file ? request.file.filename : null}) 
             RETURNING *;
         `;
         console.log(uuid, name, address, phones, description, imageUrl);

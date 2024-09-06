@@ -2,8 +2,10 @@ import sql from '../db.js';
 import { randomUUID } from 'node:crypto';
 
 export const getBarber = async (req, res) => {
+    const { barbershopid } = req.params;
+
     try {
-        const barbershops = await sql`select * from "barbershopbarber"`;
+        const barbershops = await sql`SELECT * FROM barbershopbarber WHERE barbershopid = ${barbershopid}`;
         console.log(barbershops);
         res.status(200).json(barbershops);
     } catch (error) {
