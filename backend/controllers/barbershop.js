@@ -36,7 +36,7 @@ export const createBarbershop = async (request, response) => {
     const uuid = randomUUID();
     console.log(randomUUID);
     try {
-        const { name, address, phones, description } = request.body;
+        const { name, address, phones, description, imageUrl } = request.body;
 
         const query = await sql`
             INSERT INTO "Barbershop" (id, name, address, phones, description, "imageUrl") 
