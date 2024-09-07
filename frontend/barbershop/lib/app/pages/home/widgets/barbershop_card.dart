@@ -113,7 +113,7 @@ class BarbershopCard extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.network(
-                                    barbershop.imageUrl,
+                                    "http://10.0.2.2:8800/users/uploads/${barbershop.imageUrl}",
                                     fit: BoxFit.cover,
                                     height: 170,
                                   ),

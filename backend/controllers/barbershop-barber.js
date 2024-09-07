@@ -34,3 +34,20 @@ export const createBarber = async (request, response) => {
         response.status(500).json({ message: 'Erro ao criar barbeiro' });
     }
 };
+
+export const deleteBarber = async (request, response) => {
+    const uuid = randomUUID();
+    try {
+        const { id } = request.params;
+        const query = await sql`
+            DELETE FROM barbershopbarber
+            WHERE barberid = ${id}
+            RETURNING *;
+        `;
+        console.log(query);
+        res.status(200).json({ message: 'Barbeiro deletado com sucesso' });
+    } catch (error) {
+        console.error(error);
+        response.status(500).json({ message: 'Erro ao deletar barbeiro' });
+    }
+}

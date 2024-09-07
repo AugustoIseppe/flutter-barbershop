@@ -257,74 +257,74 @@ class _DatailsPageState extends State<DetailsPage> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: colorsPalletes.primaryColor,
-          foregroundColor: colorsPalletes.white,
-          centerTitle: true,
-          actions: [
-            Consumer<BookingStore>(
-              builder: (context, store, child) {
-                if (store.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (store.error.isNotEmpty) {
-                  return Center(
-                    child: Text(store.error),
-                  );
-                }
+        // appBar: AppBar(
+        //   backgroundColor: Colors.transparent,
+        //   foregroundColor: colorsPalletes.white,
+        //   centerTitle: true,
+        //   actions: [
+        //     Consumer<BookingStore>(
+        //       builder: (context, store, child) {
+        //         if (store.isLoading) {
+        //           return const Center(
+        //             child: CircularProgressIndicator(),
+        //           );
+        //         }
+        //         if (store.error.isNotEmpty) {
+        //           return Center(
+        //             child: Text(store.error),
+        //           );
+        //         }
 
-                // Acessando o primeiro serviço para pegar a data
-                final firstBooking =
-                    store.bookings.isNotEmpty ? store.bookings.first : null;
+        //         // Acessando o primeiro serviço para pegar a data
+        //         final firstBooking =
+        //             store.bookings.isNotEmpty ? store.bookings.first : null;
 
-                if (firstBooking != null) {
-                  // Formatando a data para o formato dia/mês/ano
-                  DateTime.parse(store.bookings.first.date.toString());
-                }
-                return Stack(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => BookingPage(
-                              barbershopData: widget.barbershop.toMap(),
-                              userData: widget.userData,
-                            ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Ionicons.cart_outline,
-                      ),
-                    ),
-                    Positioned(
-                      right: 2,
-                      top: 1,
-                      child: Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent[700],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          store.bookings.length.toString(),
-                          style: GoogleFonts.lato(
-                            color: colorsPalletes.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+        //         if (firstBooking != null) {
+        //           // Formatando a data para o formato dia/mês/ano
+        //           DateTime.parse(store.bookings.first.date.toString());
+        //         }
+        //         return Stack(
+        //           children: [
+        //             IconButton(
+        //               onPressed: () {
+        //                 Navigator.of(context).push(
+        //                   MaterialPageRoute(
+        //                     builder: (context) => BookingPage(
+        //                       barbershopData: widget.barbershop.toMap(),
+        //                       userData: widget.userData,
+        //                     ),
+        //                   ),
+        //                 );
+        //               },
+        //               icon: const Icon(
+        //                 Ionicons.cart_outline,
+        //               ),
+        //             ),
+        //             Positioned(
+        //               right: 2,
+        //               top: 1,
+        //               child: Container(
+        //                 padding: const EdgeInsets.all(3),
+        //                 decoration: BoxDecoration(
+        //                   color: Colors.redAccent[700],
+        //                   shape: BoxShape.circle,
+        //                 ),
+        //                 child: Text(
+        //                   store.bookings.length.toString(),
+        //                   style: GoogleFonts.lato(
+        //                     color: colorsPalletes.white,
+        //                     fontSize: 12,
+        //                     fontWeight: FontWeight.bold,
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //           ],
+        //         );
+        //       },
+        //     ),
+        //   ],
+        // ),
         backgroundColor: colorsPalletes.primaryColor,
         body: SingleChildScrollView(
           child: Stack(
@@ -333,10 +333,14 @@ class _DatailsPageState extends State<DetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.network(widget.barbershop.imageUrl),
+                  Image.network("http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}"),
                   _buildBarbershopInfo(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
+                  if (Provider.of<BarberStore>(context).barbers.isEmpty)
+                    Container()
+                  else
                   const Barbers(),
+                  if (Provider.of<BarberStore>(context).barbers.isNotEmpty)
                   _buildSectionDivider(colorsPalletes),
                   _buildAboutSection(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),

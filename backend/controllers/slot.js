@@ -3,16 +3,16 @@ import { randomUUID } from 'node:crypto'; //? -> Importa a função randomUUID d
 
 export const getSlots = async (request, response) => {
     try {
-        const { barbershopId, date } = request.query; // Extraindo os parâmetros da query string
+        const { barberid, date } = request.query; // Extraindo os parâmetros da query string
 
         const query = await sql`
-SELECT a.*, d.time
-FROM "AvailableSlots" AS a
-JOIN "DefaultSlots" AS d ON a.timeId = d.id
-WHERE a.barbershopId = ${barbershopId}
-  AND a.date = ${date}
-    AND a.isAvailable = TRUE
-    ORDER BY d.time;
+            SELECT a.*, d.time
+            FROM "AvailableSlots" AS a
+            JOIN "DefaultSlots" AS d ON a.timeId = d.id
+            WHERE a.barberid = ${barberid}
+            AND a.date = ${date}
+            AND a.isAvailable = TRUE
+            ORDER BY d.time;
         `;
         response.status(200).json(query);
     } catch (error) {
@@ -21,26 +21,28 @@ WHERE a.barbershopId = ${barbershopId}
     }
 };
 
+
+
 export const updateSlot = async (request, response) => {
     try {
-        const { id, timeid, date, barbershopid } = request.body;
+        const { id, timeid, date, barberid } = request.body;
 
         // Validação básica para garantir que todos os campos necessários estão presentes
-        if (!id || !timeid || !date || !barbershopid) {
-            console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barbershopid:', barbershopid);
-            return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barbershopid) são necessários.' });
+        if (!id || !timeid || !date || !barberid) {
+            console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barberbarberidhopid:', barberid);
+            return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barberid) são necessários.' });
         }
-        console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barbershopid:', barbershopid);
+        console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barberid:', barberid);
 
         // Atualizar o slot
         const updateQuery = await sql`
             UPDATE "AvailableSlots"
             SET "isavailable" = FALSE
             WHERE "id" = ${id}
-              AND "timeid" = ${timeid}
-              AND "date" = ${date}
-              AND "barbershopid" = ${barbershopid}
-              AND "isavailable" = TRUE
+            AND "timeid" = ${timeid}
+            AND "date" = ${date}
+            AND "barberid" = ${barberid}
+            AND "isavailable" = TRUE
             RETURNING *;
         `;
 
@@ -80,11 +82,11 @@ export const createSlot = async (request, response) => {
     const uuid = randomUUID();
     console.log(randomUUID);
     try {
-        const { barbershopId, time, date } = request.body;
+        const { barberid, time, date } = request.body;
 
         const query = await sql`
-            INSERT INTO "DefaultSlots" (id, barbershopId, time, date) 
-            VALUES (${uuid}, ${barbershopId}, ${time}, ${date}) 
+            INSERT INTO "DefaultSlots" (id, barberid, time, date) 
+            VALUES (${uuid}, ${barberid}, ${time}, ${date}) 
             RETURNING *;
         `;
         console.log(query);
@@ -97,12 +99,12 @@ export const createSlot = async (request, response) => {
 
 export const createAvailableSlot = async (request, response) => {
     try {
-        const { barbershopId, date } = request.body;
+        const { barberid, date } = request.body;
 
         // Pega os horários da DefaultSlots para o dia especificado
         const defaultSlots = await sql`
             SELECT * FROM "DefaultSlots"
-            WHERE barbershopId = ${barbershopId} AND date = ${date};
+            WHERE barberid = ${barberid} AND date = ${date};
         `;
 
         if (defaultSlots.length === 0) {
@@ -112,8 +114,8 @@ export const createAvailableSlot = async (request, response) => {
         // Insere esses horários na tabela AvailableSlots
         const promises = defaultSlots.map(slot => {
             return sql`
-                INSERT INTO "AvailableSlots" (id, barbershopid, date, timeid, isavailable, createdAt, updatedAt)
-                VALUES (${randomUUID()}, ${barbershopId}, ${date}, ${slot.id}, TRUE, NOW(), NOW());
+                INSERT INTO "AvailableSlots" (id, barberid, date, timeid, isavailable, createdAt, updatedAt)
+                VALUES (${randomUUID()}, ${barberid}, ${date}, ${slot.id}, TRUE, NOW(), NOW());
             `;
         });
 
