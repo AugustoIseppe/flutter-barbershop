@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 class SlotsModel {
  final String id;
-  final String barbershopid;
+  final String barberid;
   final DateTime date;
   final String timeid;
   final bool isavailable;
@@ -12,7 +12,7 @@ class SlotsModel {
 
   SlotsModel({
     required this.id,
-    required this.barbershopid,
+    required this.barberid,
     required this.date,
     required this.timeid,
     required this.isavailable,
@@ -24,7 +24,7 @@ class SlotsModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'barbershopid': barbershopid,
+      'barberid': barberid,
       'date': date,
       'timeId': timeid,
       'isavailable': isavailable,
@@ -43,10 +43,10 @@ class SlotsModel {
 
   factory SlotsModel.fromMap(Map<String, dynamic> json) {
     return SlotsModel(
-      id: json['id'] ?? 'nao checou nenhum id',
-      barbershopid: json['barbershopid'] ?? 'nao checou nenhum barbershopid',
+      id: json['id'] ?? 'nao chegou nenhum id',
+      barberid: json['barberid'] ?? 'nao chegou nenhum barberid',
       date: DateTime.parse(json['date']),
-      timeid: json['timeid'] ?? 'nao checou nenhum timeId',
+      timeid: json['timeid'] ?? 'nao chegou nenhum timeId',
       isavailable: json['isavailable'] ?? true,
       createdat: DateTime.parse(json['createdat']),
       updatedat: DateTime.parse(json['updatedat']),

@@ -10,6 +10,12 @@ class BarberStore extends ChangeNotifier {
  bool isLoading = false;
   List<BarbershopBarberModel> barbers = [];
   String error = '';
+  String? selectedBarberId;
+
+  void selectBarber(String barberId) {
+    selectedBarberId = barberId;
+    notifyListeners();
+  }
 
   Future<void> getBarbers(String barbershopid) async {
     isLoading = true;

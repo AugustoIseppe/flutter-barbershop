@@ -7,18 +7,18 @@ class BarberDetails extends StatelessWidget {
   final Map<String, dynamic> barber;
 
   // Função para abrir o WhatsApp com o número do barbeiro
-  void _launchWhatsApp(String phoneNumber) async {
-    final Uri whatsappUrl = Uri(
-      scheme: 'https',
-      host: 'wa.me',
-      path: phoneNumber,
-    );
-    // if (await canLaunchUrl(whatsappUrl)) {
-    //   await launchUrl(whatsappUrl);
-    // } else {
-    //   throw 'Could not launch WhatsApp';
-    // }
-  }
+  // void _launchWhatsApp(String phoneNumber) async {
+  //   final Uri whatsappUrl = Uri(
+  //     scheme: 'https',
+  //     host: 'wa.me',
+  //     path: phoneNumber,
+  //   );
+  //   // if (await canLaunchUrl(whatsappUrl)) {
+  //   //   await launchUrl(whatsappUrl);
+  //   // } else {
+  //   //   throw 'Could not launch WhatsApp';
+  //   // }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class BarberDetails extends StatelessWidget {
             // Botão para WhatsApp
             Center(
               child: ElevatedButton.icon(
-                onPressed: () => _launchWhatsApp(barber["barberwhatsapp"]),
+                onPressed: () {},
                 icon: const Icon(Icons.message),
                 label: const Text("Contact via WhatsApp"),
                 style: ElevatedButton.styleFrom(

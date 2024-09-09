@@ -1,7 +1,6 @@
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/model/barbershop_model.dart';
 import 'package:barbershop/app/data/repositories/booking_repository.dart';
-import 'package:barbershop/app/pages/booking/booking_page.dart';
 import 'package:barbershop/app/pages/booking/booking_store.dart';
 import 'package:barbershop/app/pages/details/barber_store.dart';
 import 'package:barbershop/app/pages/details/details.store.dart';
@@ -31,6 +30,7 @@ class DetailsPage extends StatefulWidget {
 class _DatailsPageState extends State<DetailsPage> {
   BookingRepository bookingRepository = BookingRepository(client: HttpClient());
   bool showServices = false;
+  bool showBarbers = false;
   bool showDateService = false;
   List<bool>? _isCheckedList;
   List<String> _selectedServices = [];
@@ -42,7 +42,7 @@ class _DatailsPageState extends State<DetailsPage> {
   String? _confirmId;
   String? _confirmTimeId;
   String? _confirmBarbershopId;
-
+  String? _confirmBarberId;
   //* Função para exibir um SnackBar no topo da tela
   void showTopSnackBar(BuildContext context, String message, Color colorIcon,
       Color colorBackground, IconData icon) {
@@ -333,7 +333,10 @@ class _DatailsPageState extends State<DetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.network("http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}"),
+                  Image.network("http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}",
+                      width: MediaQuery.of(context).size.width,
+                      height: 280,
+                      fit: BoxFit.cover),
                   _buildBarbershopInfo(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
                   if (Provider.of<BarberStore>(context).barbers.isEmpty)
@@ -344,10 +347,13 @@ class _DatailsPageState extends State<DetailsPage> {
                   _buildSectionDivider(colorsPalletes),
                   _buildAboutSection(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
+                  _buildBarberSelector(colorsPalletes),
                   _buildServiceSelector(colorsPalletes),
                   _buildDateSelector(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
-                  _buildServiceList(colorsPalletes),
+                  if (_selectedServices.isNotEmpty)
+                    _buildServiceList(colorsPalletes),
+                  if (_selectedServices.isNotEmpty)
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextButton(
@@ -399,6 +405,7 @@ class _DatailsPageState extends State<DetailsPage> {
                 ],
               ),
               // _buildBackButton(colorsPalletes),
+              if (showBarbers) _buildBarberCheckboxList(colorsPalletes),
               if (showDateService) _buildDatePicker(),
               if (showServices) _buildServiceModal(colorsPalletes),
             ],
@@ -497,6 +504,73 @@ class _DatailsPageState extends State<DetailsPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+    Padding _buildBarberSelector(ColorsPalletes colorsPalletes) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            showBarbers = !showBarbers;
+          });
+        },
+        child: Card(
+          color: colorsPalletes.secondaryColor,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Iconsax.personalcard,
+                      color: colorsPalletes.nonaryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 15),
+                         Provider.of<BarberStore>(context).selectedBarberId != null ? Text(
+                            Provider.of<BarberStore>(context)
+                                .barbers
+                                .firstWhere((element) =>
+                                    element.barberid ==
+                                    Provider.of<BarberStore>(context)
+                                        .selectedBarberId)
+                                .barbername,
+                            style: GoogleFonts.lato(
+                              color: colorsPalletes.nonaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ) :
+                         Text(
+                            'Selecione o profissional',
+                            style: GoogleFonts.lato(
+                              color: colorsPalletes.nonaryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          )
+                        
+                  ],
+                ),
+                const SizedBox(width: 10),
+                Icon(
+                  Iconsax.arrow_right_1,
+                  size: 18,
+                  color: colorsPalletes.quinaryColor,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -644,9 +718,7 @@ class _DatailsPageState extends State<DetailsPage> {
               return Text(store.error);
             }
             if (store.barbershopsServices.isEmpty) {
-              return const Center(
-                child: Text('Nenhum serviço encontrado'),
-              );
+              return Container();
             }
 
             // Inicialize a lista _isCheckedList após os serviços serem carregados
@@ -885,7 +957,7 @@ class _DatailsPageState extends State<DetailsPage> {
                     final formattedDate =
                         _formatDateForPostgres(_selectedDate!);
                     Provider.of<SlotsStore>(context, listen: false)
-                        .getSlots(widget.barbershop.id, formattedDate);
+                        .getSlots(_confirmBarberId!, formattedDate);
                   }
                 });
               },
@@ -1073,8 +1145,7 @@ class _DatailsPageState extends State<DetailsPage> {
                                         _confirmTime = selectedSlot.time;
                                         _confirmId = selectedSlot.id;
                                         _confirmTimeId = selectedSlot.timeid;
-                                        _confirmBarbershopId =
-                                            selectedSlot.barbershopid;
+                                        _confirmBarbershopId = selectedSlot.barberid;
                                       });
 
                                       // Mensagem de confirmação ou ação adicional após a atualização
@@ -1195,6 +1266,13 @@ class _DatailsPageState extends State<DetailsPage> {
                 itemCount: store.barbershopsServices.length,
                 itemBuilder: (context, index) {
                   final service = store.barbershopsServices[index];
+                  print('ID: ${service.id} | Nome: ${service.name}');
+                  if (_isCheckedList == null ||
+                      _isCheckedList!.length !=
+                          store.barbershopsServices.length) {
+                    _isCheckedList = List<bool>.filled(
+                        store.barbershopsServices.length, false);
+                  }
                   return CheckboxListTile(
                     checkboxShape: ContinuousRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -1276,4 +1354,115 @@ class _DatailsPageState extends State<DetailsPage> {
       ],
     );
   }
+  //!-----------------
+
+  Widget _buildBarberCheckboxList(ColorsPalletes colorsPalletes) {
+  return Container(
+    decoration: BoxDecoration(
+      color: colorsPalletes.secondaryColor,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    height: 750,
+    padding: const EdgeInsets.all(10),
+    alignment: Alignment.center,
+    child: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text('Selecione o barbeiro',
+              style: GoogleFonts.lato(
+                color: colorsPalletes.nonaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
+        ),
+        Consumer<BarberStore>(
+          builder: (context, store, child) {
+            return Expanded(
+              child: ListView.separated(
+                separatorBuilder: (context, index) => Divider(
+                  color: colorsPalletes.nonaryColor,
+                  thickness: 1,
+                ),
+                itemCount: store.barbers.length,
+                itemBuilder: (context, index) {
+                  final barber = store.barbers[index];
+              
+                  // Verifica se este barbeiro é o selecionado
+                  bool isSelected = store.selectedBarberId == barber.barberid;
+              
+                  return SizedBox(
+                    height: 70,
+                    // width: 300,
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            "http://10.0.2.2:8800/users/uploads/${barber.barberimage}"),
+                        radius: 30,
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            barber.barbername,
+                            style: GoogleFonts.lato(
+                              color: colorsPalletes.nonaryColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'R\$ ${barber.barberqtdservices.toString()}',
+                            style: GoogleFonts.lato(
+                              color: colorsPalletes.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Checkbox(
+                        value: isSelected,
+                        onChanged: (bool? value) {
+                          if (value == true) {
+                            // Seleciona apenas este barbeiro e desmarca os outros
+                            store.selectBarber(barber.barberid);
+                            _confirmBarberId = barber.barberid;
+                          }
+                        },
+                        activeColor: colorsPalletes.primaryColor,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: colorsPalletes.primaryColor,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                fixedSize: const Size(300, 40)),
+            onPressed: () {
+              setState(() {
+                showBarbers = !showBarbers;
+              });
+                _confirmBarberId = Provider.of<BarberStore>(context, listen: false).selectedBarberId;
+              // print('Barbeiro selecionado: ${Provider.of<BarberStore>(context, listen: false).selectedBarberId}');
+              print('Barbeiro selecionado _confirmId: $_confirmBarberId');
+            },
+            child: Text(
+              'Confirmar',
+              style: TextStyle(color: colorsPalletes.nonaryColor),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 }

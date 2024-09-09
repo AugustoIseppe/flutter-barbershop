@@ -17,11 +17,11 @@ class SlotsStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getSlots(String barbershopId, String date) async {
+  Future getSlots(String barberid, String date) async {
     isLoading = true;
     notifyListeners(); // Notificar que a loading mudou
     try {
-      final result = await repository.getSlots(barbershopId, date);
+      final result = await repository.getSlots(barberid, date);
       slots = result;
       error = '';
     } on Exception catch (e) {
@@ -31,11 +31,11 @@ class SlotsStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateSlots(String id, String timeid, String date, String barbershopid,) async {
+  Future updateSlots(String id, String timeid, String date, String barberid,) async {
     isLoading = true;
     notifyListeners();
     try {
-      final result = await repository.updateSlots(id, timeid, date, barbershopid);
+      final result = await repository.updateSlots(id, timeid, date, barberid);
       slots = result;
       error = '';
       for(var slot in slots){

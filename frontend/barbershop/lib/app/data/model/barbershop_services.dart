@@ -37,7 +37,7 @@ class BarbershopServicesModel {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       description: map['description'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',
+      imageUrl: map['imageUrl'] ?? 'Image not available',
       price: map['price'] ?? '',
       barbershopId: map['barbershopId'] ?? '',
     );

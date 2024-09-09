@@ -15,10 +15,10 @@ class SlotsRepository implements ISlotsRepository {
   SlotsRepository({required this.client});
 
   @override
-  Future<List<SlotsModel>> getSlots(String babershopId, String date) async {
+  Future<List<SlotsModel>> getSlots(String baberid, String date) async {
     try {
       final String url =
-          'http://10.0.2.2:8800/slots?barbershopId=$babershopId&date=$date';
+          'http://10.0.2.2:8800/slots?barberid=$baberid&date=$date';
       // final String url =
       //     'http://192.168.1.109:8800/slots?barbershopId=$babershopId&date=$date';
 

@@ -15,7 +15,9 @@ class DetailsStore extends ChangeNotifier{
     isLoading = true;
     try {
       final result = await repository.getBarbershopsWithServices(id);
+      print(result);
       barbershopsServices = result;
+      barbershopsServices.map((e) => print("BARBERSHOPS SERVICES FROM STORE ${e.name}")).toList();
     } on Exception catch (e) {
       error = e.toString();
     }

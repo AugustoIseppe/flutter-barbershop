@@ -25,11 +25,12 @@ class BarbershopServiceRepository implements IBarbershopServiceRepository {
       }
 
       final barbershopServiceData = jsonDecode(response.body);
-
+      print(barbershopServiceData);
       final barbershopServices = barbershopServiceData
           .map<BarbershopServicesModel>((barbershopService) =>
               BarbershopServicesModel.fromMap(barbershopService))
           .toList();
+      barbershopServices.map((e) => print("BARBERSHOPS SERVICES FROM REPOSITORY ${e.name}")).toList();
       return barbershopServices;
     } catch (e) {
       throw Exception('Erro ao buscar serviços da barbearia: $e');
