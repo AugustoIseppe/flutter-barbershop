@@ -5,9 +5,8 @@ import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/model/slots_model.dart';
 
 abstract class ISlotsRepository {
-  Future<List<SlotsModel>> getSlots(String babershopId, String date);
-  Future<List<SlotsModel>> updateSlots(
-      String id, String timeid, String date, String barbershopid);
+  Future<List<SlotsModel>> getSlots(String baberid, String date);
+  Future<List<SlotsModel>> updateSlots(String id, String timeid, String date, String barberid);
 }
 
 class SlotsRepository implements ISlotsRepository {
@@ -51,8 +50,7 @@ class SlotsRepository implements ISlotsRepository {
   }
 
   @override
-Future<List<SlotsModel>> updateSlots(
-    String id, String timeid, String date, String barbershopid) async {
+Future<List<SlotsModel>> updateSlots(String id, String timeid, String date, String barberid) async {
   try {
     const String url = 'http://10.0.2.2:8800/Slots';
 
@@ -65,7 +63,7 @@ Future<List<SlotsModel>> updateSlots(
         'id': id,
         'timeid': timeid,
         'date': date,
-        'barbershopid': barbershopid,
+        'barberid': barberid,
       },
     );
 
@@ -79,7 +77,7 @@ Future<List<SlotsModel>> updateSlots(
 
     // Convertendo o mapa em uma instância de SlotsModel
 
-    final getSlots = await this.getSlots(barbershopid, date);
+    final getSlots = await this.getSlots(barberid, date);
 
     return getSlots;
     // Retornando uma lista com um único elemento
@@ -87,8 +85,5 @@ Future<List<SlotsModel>> updateSlots(
   } catch (e) {
     throw Exception('Erro ao buscar slots: $e');
   }
-}
-
-
-
+  }
 }

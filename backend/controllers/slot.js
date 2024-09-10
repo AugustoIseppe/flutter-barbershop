@@ -29,7 +29,7 @@ export const updateSlot = async (request, response) => {
 
         // Validação básica para garantir que todos os campos necessários estão presentes
         if (!id || !timeid || !date || !barberid) {
-            console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barberbarberidhopid:', barberid);
+            console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barberid:', barberid);
             return response.status(400).json({ message: 'Todos os parâmetros (id, timeid, date, barberid) são necessários.' });
         }
         console.log('id:', id, 'timeid:', timeid, 'date:', date, 'barberid:', barberid);

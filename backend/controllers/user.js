@@ -28,7 +28,7 @@ export const createUser = async (request, response) => {
     } catch (error) {
         //request entity too large -> erro de tamanho de arquivo
         console.error(error);
-        response.status(500).json({ message: 'Erro ao criar usuário'});
+        response.status(500).json({ message: 'Erro ao criar usuário' });
     }
 };
 
@@ -40,7 +40,7 @@ export const userLogin = async (req, res) => {
             SELECT * FROM "User" 
             WHERE email = ${email} AND password = ${password};
         `;
-        
+
         if (query.length === 0) {
             return res.status(401).json("Usuário ou senha inválidos!");
         }

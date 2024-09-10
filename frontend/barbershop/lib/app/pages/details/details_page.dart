@@ -1,6 +1,7 @@
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/model/barbershop_model.dart';
 import 'package:barbershop/app/data/repositories/booking_repository.dart';
+import 'package:barbershop/app/pages/booking/booking_page.dart';
 import 'package:barbershop/app/pages/booking/booking_store.dart';
 import 'package:barbershop/app/pages/details/barber_store.dart';
 import 'package:barbershop/app/pages/details/details.store.dart';
@@ -41,7 +42,7 @@ class _DatailsPageState extends State<DetailsPage> {
   DateTime? _confirmDate;
   String? _confirmId;
   String? _confirmTimeId;
-  String? _confirmBarbershopId;
+  // String? _confirmBarbershopId;
   String? _confirmBarberId;
   //* Função para exibir um SnackBar no topo da tela
   void showTopSnackBar(BuildContext context, String message, Color colorIcon,
@@ -190,23 +191,29 @@ class _DatailsPageState extends State<DetailsPage> {
             content: Text(
               'Reserva para ${_formatDateForView(date)} às ${_formatTimeForPostgres(time)}h',
               style: GoogleFonts.lato(
-                color: ColorsPalletes().nonaryColor,
-              ),
+                  color: ColorsPalletes().nonaryColor, fontSize: 13),
             ),
             actions: <Widget>[
               TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
                 onPressed: () {
-                  _clearField();
+                  // _clearField();
                   Navigator.of(context).pop();
                 },
                 child: Text(
                   'Não',
                   style: GoogleFonts.lato(
-                    color: ColorsPalletes().quaternaryColor,
-                  ),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
                 ),
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
                 onPressed: () async {
                   final userId = widget.userData['id'];
                   await bookingRepository.createBooking(
@@ -219,14 +226,15 @@ class _DatailsPageState extends State<DetailsPage> {
                     print('ID: $_confirmId');
                     print('TimeID: $_confirmTimeId');
                     print('Date: ${_formatDateForPostgres(_confirmDate!)}');
-                    print('BarbershopID: $_confirmBarbershopId');
+                    print('Barerid: $_confirmBarberId');
 
                     store.updateSlots(
                       _confirmId!,
                       _confirmTimeId!,
                       _confirmDate!.toIso8601String(),
-                      _confirmBarbershopId!,
+                      _confirmBarberId!,
                     );
+                    print("_confirmBarberId: $_confirmBarberId");
                   } catch (e) {
                     throw Exception('Erro ao atualizar o slot: $e');
                   }
@@ -243,8 +251,9 @@ class _DatailsPageState extends State<DetailsPage> {
                 child: Text(
                   'Sim',
                   style: GoogleFonts.lato(
-                    color: ColorsPalletes().quaternaryColor,
-                  ),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
                 ),
               ),
             ],
@@ -257,74 +266,74 @@ class _DatailsPageState extends State<DetailsPage> {
 
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: Colors.transparent,
-        //   foregroundColor: colorsPalletes.white,
-        //   centerTitle: true,
-        //   actions: [
-        //     Consumer<BookingStore>(
-        //       builder: (context, store, child) {
-        //         if (store.isLoading) {
-        //           return const Center(
-        //             child: CircularProgressIndicator(),
-        //           );
-        //         }
-        //         if (store.error.isNotEmpty) {
-        //           return Center(
-        //             child: Text(store.error),
-        //           );
-        //         }
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          foregroundColor: colorsPalletes.white,
+          centerTitle: true,
+          actions: [
+            Consumer<BookingStore>(
+              builder: (context, store, child) {
+                if (store.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (store.error.isNotEmpty) {
+                  return Center(
+                    child: Text(store.error),
+                  );
+                }
 
-        //         // Acessando o primeiro serviço para pegar a data
-        //         final firstBooking =
-        //             store.bookings.isNotEmpty ? store.bookings.first : null;
+                // Acessando o primeiro serviço para pegar a data
+                final firstBooking =
+                    store.bookings.isNotEmpty ? store.bookings.first : null;
 
-        //         if (firstBooking != null) {
-        //           // Formatando a data para o formato dia/mês/ano
-        //           DateTime.parse(store.bookings.first.date.toString());
-        //         }
-        //         return Stack(
-        //           children: [
-        //             IconButton(
-        //               onPressed: () {
-        //                 Navigator.of(context).push(
-        //                   MaterialPageRoute(
-        //                     builder: (context) => BookingPage(
-        //                       barbershopData: widget.barbershop.toMap(),
-        //                       userData: widget.userData,
-        //                     ),
-        //                   ),
-        //                 );
-        //               },
-        //               icon: const Icon(
-        //                 Ionicons.cart_outline,
-        //               ),
-        //             ),
-        //             Positioned(
-        //               right: 2,
-        //               top: 1,
-        //               child: Container(
-        //                 padding: const EdgeInsets.all(3),
-        //                 decoration: BoxDecoration(
-        //                   color: Colors.redAccent[700],
-        //                   shape: BoxShape.circle,
-        //                 ),
-        //                 child: Text(
-        //                   store.bookings.length.toString(),
-        //                   style: GoogleFonts.lato(
-        //                     color: colorsPalletes.white,
-        //                     fontSize: 12,
-        //                     fontWeight: FontWeight.bold,
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //           ],
-        //         );
-        //       },
-        //     ),
-        //   ],
-        // ),
+                if (firstBooking != null) {
+                  // Formatando a data para o formato dia/mês/ano
+                  DateTime.parse(store.bookings.first.date.toString());
+                }
+                return Stack(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => BookingPage(
+                              barbershopData: widget.barbershop.toMap(),
+                              userData: widget.userData,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Iconsax.archive_book,
+                      ),
+                    ),
+                    Positioned(
+                      right: 4,
+                      top:3,
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent[700],
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          store.bookings.length.toString(),
+                          style: GoogleFonts.lato(
+                            color: colorsPalletes.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
         backgroundColor: colorsPalletes.primaryColor,
         body: SingleChildScrollView(
           child: Stack(
@@ -333,7 +342,8 @@ class _DatailsPageState extends State<DetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.network("http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}",
+                  Image.network(
+                      "http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}",
                       width: MediaQuery.of(context).size.width,
                       height: 280,
                       fit: BoxFit.cover),
@@ -342,9 +352,9 @@ class _DatailsPageState extends State<DetailsPage> {
                   if (Provider.of<BarberStore>(context).barbers.isEmpty)
                     Container()
                   else
-                  const Barbers(),
+                    Barbers( barbershop: widget.barbershop),
                   if (Provider.of<BarberStore>(context).barbers.isNotEmpty)
-                  _buildSectionDivider(colorsPalletes),
+                    _buildSectionDivider(colorsPalletes),
                   _buildAboutSection(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
                   _buildBarberSelector(colorsPalletes),
@@ -354,54 +364,56 @@ class _DatailsPageState extends State<DetailsPage> {
                   if (_selectedServices.isNotEmpty)
                     _buildServiceList(colorsPalletes),
                   if (_selectedServices.isNotEmpty)
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: colorsPalletes.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                      ),
-                      onPressed: () async {
-                        if (_selectedServices.isEmpty) {
-                          showTopSnackBar(
-                            context,
-                            'Selecione ao menos um serviço!',
-                            Colors.redAccent.shade700,
-                            Colors.redAccent.shade700,
-                            Icons.error,
-                          );
-                        } else if (_selectedDate == null) {
-                          showTopSnackBar(
-                            context,
-                            'Selecione uma data!',
-                            Colors.redAccent.shade700,
-                            Colors.redAccent.shade700,
-                            Icons.calendar_month,
-                          );
-                        } else if (_confirmTime == null) {
-                          showTopSnackBar(
-                            context,
-                            'Selecione um horário!',
-                            Colors.redAccent.shade700,
-                            Colors.redAccent.shade700,
-                            Icons.time_to_leave,
-                          );
-                        }
-                        _showDialog(_confirmDate!, _confirmTime!);
-                        print('Data: ${_formatDateForPostgres(_confirmDate!)}');
-                        print('Hora: ${_formatTimeForPostgres(_confirmTime!)}');
-                      },
-                      child: Text(
-                        'Confirmar Agendamento',
-                        style: GoogleFonts.lato(
-                          color: colorsPalletes.nonaryColor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: colorsPalletes.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        onPressed: () async {
+                          if (_selectedServices.isEmpty) {
+                            showTopSnackBar(
+                              context,
+                              'Selecione ao menos um serviço!',
+                              Colors.redAccent.shade700,
+                              Colors.redAccent.shade700,
+                              Icons.error,
+                            );
+                          } else if (_selectedDate == null) {
+                            showTopSnackBar(
+                              context,
+                              'Selecione uma data!',
+                              Colors.redAccent.shade700,
+                              Colors.redAccent.shade700,
+                              Icons.calendar_month,
+                            );
+                          } else if (_confirmTime == null) {
+                            showTopSnackBar(
+                              context,
+                              'Selecione um horário!',
+                              Colors.redAccent.shade700,
+                              Colors.redAccent.shade700,
+                              Icons.time_to_leave,
+                            );
+                          }
+                          _showDialog(_confirmDate!, _confirmTime!);
+                          print(
+                              'Data: ${_formatDateForPostgres(_confirmDate!)}');
+                          print(
+                              'Hora: ${_formatTimeForPostgres(_confirmTime!)}');
+                        },
+                        child: Text(
+                          'Confirmar Agendamento',
+                          style: GoogleFonts.lato(
+                            color: colorsPalletes.nonaryColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                 ],
               ),
               // _buildBackButton(colorsPalletes),
@@ -507,7 +519,8 @@ class _DatailsPageState extends State<DetailsPage> {
       ),
     );
   }
-    Padding _buildBarberSelector(ColorsPalletes colorsPalletes) {
+
+  Padding _buildBarberSelector(ColorsPalletes colorsPalletes) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       child: GestureDetector(
@@ -532,7 +545,8 @@ class _DatailsPageState extends State<DetailsPage> {
                       size: 20,
                     ),
                     const SizedBox(width: 15),
-                         Provider.of<BarberStore>(context).selectedBarberId != null ? Text(
+                    Provider.of<BarberStore>(context).selectedBarberId != null
+                        ? Text(
                             Provider.of<BarberStore>(context)
                                 .barbers
                                 .firstWhere((element) =>
@@ -547,8 +561,8 @@ class _DatailsPageState extends State<DetailsPage> {
                             ),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                          ) :
-                         Text(
+                          )
+                        : Text(
                             'Selecione o profissional',
                             style: GoogleFonts.lato(
                               color: colorsPalletes.nonaryColor,
@@ -558,7 +572,6 @@ class _DatailsPageState extends State<DetailsPage> {
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                           )
-                        
                   ],
                 ),
                 const SizedBox(width: 10),
@@ -889,7 +902,9 @@ class _DatailsPageState extends State<DetailsPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              // Personalizando as cores do calendário
+              // monthViewSettings: DateRangePickerMonthViewSettings(
+              //   dayFormat: 'E', // Formato dos dias da semana (ex.: Seg, Ter)
+              // ),
               monthCellStyle: DateRangePickerMonthCellStyle(
                 textStyle: GoogleFonts.lato(
                   color: colorsPalletes.nonaryColor, // Cor das fontes das datas
@@ -912,6 +927,10 @@ class _DatailsPageState extends State<DetailsPage> {
                 weekendTextStyle: GoogleFonts.lato(
                   color: colorsPalletes.white, // Cor das datas de fim de semana
                 ),
+                disabledDatesTextStyle: GoogleFonts.lato(
+                  color: Colors.grey, // Cor das datas desabilitadas (passadas)
+                  fontSize: 15,
+                ),
                 blackoutDatesDecoration: BoxDecoration(
                   color: colorsPalletes
                       .white, // Fundo das células de datas bloqueadas
@@ -930,11 +949,14 @@ class _DatailsPageState extends State<DetailsPage> {
                   ),
                 ),
                 dayFormat:
-                    'EEE', // Formato dos dias da semana (ex.: Mon, Tue, ...)
+                    'E', // Formato dos dias da semana (ex.: Mon, Tue, ...)
               ),
               backgroundColor:
                   colorsPalletes.secondaryColor, // Cor de fundo do calendário
-              enablePastDates: true,
+              enablePastDates: false, // Desabilitar a seleção de datas passadas
+              minDate:
+                  DateTime.now(), // Definindo a data mínima como a data atual
+
               endRangeSelectionColor: colorsPalletes.primaryColor,
               yearCellStyle: DateRangePickerYearCellStyle(
                 textStyle: GoogleFonts.lato(
@@ -1145,7 +1167,7 @@ class _DatailsPageState extends State<DetailsPage> {
                                         _confirmTime = selectedSlot.time;
                                         _confirmId = selectedSlot.id;
                                         _confirmTimeId = selectedSlot.timeid;
-                                        _confirmBarbershopId = selectedSlot.barberid;
+                                        // _confirmBarbershopId = selectedSlot.barberid;
                                       });
 
                                       // Mensagem de confirmação ou ação adicional após a atualização
@@ -1357,112 +1379,126 @@ class _DatailsPageState extends State<DetailsPage> {
   //!-----------------
 
   Widget _buildBarberCheckboxList(ColorsPalletes colorsPalletes) {
-  return Container(
-    decoration: BoxDecoration(
-      color: colorsPalletes.secondaryColor,
-      borderRadius: BorderRadius.circular(20),
-    ),
-    height: 750,
-    padding: const EdgeInsets.all(10),
-    alignment: Alignment.center,
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text('Selecione o barbeiro',
+    return Container(
+      decoration: BoxDecoration(
+        color: colorsPalletes.primaryColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      height: 650,
+      padding: const EdgeInsets.all(5),
+      margin: const EdgeInsets.all(30),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('Selecione o barbeiro',
               style: GoogleFonts.lato(
                 color: colorsPalletes.nonaryColor,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               )),
-        ),
-        Consumer<BarberStore>(
-          builder: (context, store, child) {
-            return Expanded(
-              child: ListView.separated(
-                separatorBuilder: (context, index) => Divider(
-                  color: colorsPalletes.nonaryColor,
-                  thickness: 1,
+          Consumer<BarberStore>(
+            builder: (context, store, child) {
+              return Expanded(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) => Divider(
+                    color: colorsPalletes.white,
+                    thickness: 1,
+                  ),
+                  itemCount: store.barbers.length,
+                  itemBuilder: (context, index) {
+                    final barber = store.barbers[index];
+
+                    // Verifica se este barbeiro é o selecionado
+                    bool isSelected = store.selectedBarberId == barber.barberid;
+
+                    return SizedBox(
+                      height: 55,
+                      // width: 300,
+                      child: ListTile(
+                        leading: Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                "http://10.0.2.2:8800/users/uploads/${barber.barberimage}"),
+                            radius: 20,
+                          ),
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              barber.barbername,
+                              style: GoogleFonts.lato(
+                                color: colorsPalletes.nonaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Serviços realizados ${barber.barberqtdservices.toString()}',
+                              style: GoogleFonts.lato(
+                                color: colorsPalletes.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: Checkbox(
+                          shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          checkColor: Colors.black,
+                          fillColor:
+                              WidgetStateProperty.all(colorsPalletes.white),
+                          hoverColor: colorsPalletes.primaryColor,
+                          value: isSelected,
+                          onChanged: (bool? value) {
+                            if (value == true) {
+                              // Seleciona apenas este barbeiro e desmarca os outros
+                              store.selectBarber(barber.barberid);
+                              _confirmBarberId = barber.barberid;
+                            }
+                          },
+                          activeColor: colorsPalletes.primaryColor,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                itemCount: store.barbers.length,
-                itemBuilder: (context, index) {
-                  final barber = store.barbers[index];
-              
-                  // Verifica se este barbeiro é o selecionado
-                  bool isSelected = store.selectedBarberId == barber.barberid;
-              
-                  return SizedBox(
-                    height: 70,
-                    // width: 300,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            "http://10.0.2.2:8800/users/uploads/${barber.barberimage}"),
-                        radius: 30,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            barber.barbername,
-                            style: GoogleFonts.lato(
-                              color: colorsPalletes.nonaryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'R\$ ${barber.barberqtdservices.toString()}',
-                            style: GoogleFonts.lato(
-                              color: colorsPalletes.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Checkbox(
-                        value: isSelected,
-                        onChanged: (bool? value) {
-                          if (value == true) {
-                            // Seleciona apenas este barbeiro e desmarca os outros
-                            store.selectBarber(barber.barberid);
-                            _confirmBarberId = barber.barberid;
-                          }
-                        },
-                        activeColor: colorsPalletes.primaryColor,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: FilledButton(
-            style: FilledButton.styleFrom(
-                backgroundColor: colorsPalletes.primaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                fixedSize: const Size(300, 40)),
-            onPressed: () {
-              setState(() {
-                showBarbers = !showBarbers;
-              });
-                _confirmBarberId = Provider.of<BarberStore>(context, listen: false).selectedBarberId;
-              // print('Barbeiro selecionado: ${Provider.of<BarberStore>(context, listen: false).selectedBarberId}');
-              print('Barbeiro selecionado _confirmId: $_confirmBarberId');
+              );
             },
-            child: Text(
-              'Confirmar',
-              style: TextStyle(color: colorsPalletes.nonaryColor),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: colorsPalletes.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  fixedSize: const Size(300, 40)),
+              onPressed: () {
+                setState(() {
+                  showBarbers = !showBarbers;
+                });
+                _confirmBarberId =
+                    Provider.of<BarberStore>(context, listen: false)
+                        .selectedBarberId;
+                // print('Barbeiro selecionado: ${Provider.of<BarberStore>(context, listen: false).selectedBarberId}');
+                print('Barbeiro selecionado _confirmId: $_confirmBarberId');
+              },
+              child: Text(
+                'Confirmar',
+                style: TextStyle(color: colorsPalletes.primaryColor),
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 }

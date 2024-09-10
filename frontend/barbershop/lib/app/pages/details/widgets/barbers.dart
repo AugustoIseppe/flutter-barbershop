@@ -1,3 +1,4 @@
+import 'package:barbershop/app/data/model/barbershop_model.dart';
 import 'package:barbershop/app/pages/details/barber_details.dart';
 import 'package:barbershop/app/pages/details/barber_store.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
@@ -6,7 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class Barbers extends StatefulWidget {
-  const Barbers({super.key});
+  const Barbers({super.key, required this.barbershop});
+
+  final BarbershopModel barbershop;
 
   @override
   State<Barbers> createState() => _BarbersState();
@@ -53,7 +56,7 @@ class _BarbersState extends State<Barbers> {
                     return GestureDetector(
                       onTap: () {
                         // Navegação para a tela de detalhes do barbeiro
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BarberDetails(barber: barber.toMap()))); 
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BarberDetails(barber: barber.toMap(), barbershop: widget.barbershop))); 
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10.0),

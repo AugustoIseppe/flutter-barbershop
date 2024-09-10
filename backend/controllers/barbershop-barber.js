@@ -14,6 +14,27 @@ export const getBarber = async (req, res) => {
     }
 };
 
+//Listar os barbeiros com o maior numero de serviços
+export const bestRatedBarbers = async (response) => {
+    try {
+        const query = await sql`
+            SELECT barbershopbarber.*, "Barbershop".*
+            FROM "barbershopbarber"
+            JOIN "Barbershop" ON barbershopbarber.barbershopid = "Barbershop".id
+            ORDER BY barberqtdservices DESC;
+        `;
+        console.log('Query Executada:', query);
+        response.status(200).json(query);
+    } catch (error) {
+        console.error('Erro na Query:', error);
+        response.status(500).json({ message: 'Erro ao buscar barbeiros mais bem avaliados' });
+    }
+    
+}
+// SELECT "BarbershopService".*
+// FROM "BarbershopService"
+// WHERE "BarbershopService"."barbershopId" = ${id};
+// `;
 
 export const createBarber = async (request, response) => {
     const uuid = randomUUID();

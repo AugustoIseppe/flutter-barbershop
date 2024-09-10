@@ -82,6 +82,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        locale: const Locale("pt", "BR"),
         title: "Barbershop Ballan'aibs",
         home: const AuthCheck(),
         debugShowCheckedModeBanner: false,
@@ -99,7 +100,7 @@ class MyApp extends StatelessWidget {
               const BookingPage(userData: {}, barbershopData: {}),
           Routes.barbershopPage: (context) => const BarbershopPage(),
           Routes.userProfile: (context) => const UserProfile(),
-          Routes.barberDetails: (context) => BarberDetails(barber: {}),
+          Routes.barberDetails: (context) => BarberDetails(barber: {}, barbershop: {} as BarbershopModel),
           },
       ),
     );
