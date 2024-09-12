@@ -1,6 +1,8 @@
 import 'package:barbershop/app/pages/home/barbershop_store.dart';
+import 'package:barbershop/app/pages/home/best_rated_barber_store.dart';
 import 'package:barbershop/app/pages/home/widgets/app_drawer.dart';
 import 'package:barbershop/app/pages/home/widgets/barbershop_card.dart';
+import 'package:barbershop/app/pages/home/widgets/best_rated_barber.dart';
 import 'package:barbershop/app/pages/home/widgets/input_search_service.dart';
 import 'package:barbershop/app/pages/home/widgets/welcome_header.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
@@ -23,6 +25,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     final store = Provider.of<BarbershopStore>(context, listen: false);
     store.getBarbershops();
+    final bestRatedBarberStore = Provider.of<BestRatedBarberStore>(context, listen: false);
+    bestRatedBarberStore.getBestRatedBarbers();
   }
 
   @override
@@ -62,7 +66,9 @@ class _HomePageState extends State<HomePage> {
                 WelcomeHeader(userData: widget.userData),
                 const SizedBox(height: 20),
                 InputServiceService(colorsPalletes: colorsPalletes),
+                const BestRatedBarber(),
                 BarbershopCard(userData: widget.userData),
+                // const SizedBox(height: 20),
               ],
             ),
           ),

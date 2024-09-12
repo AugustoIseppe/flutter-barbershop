@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ColorsPalletes {
   Color primaryColor = const Color(0xff03071E);
-  Color secondaryColor = const Color(0xff370617);
+  Color secondaryColor = const Color(0xff230007);
   Color tertiaryColor = const Color(0xff6A040F);
   Color quaternaryColor = const Color(0xff9D0208);
   Color quinaryColor = const Color(0xffD00000);

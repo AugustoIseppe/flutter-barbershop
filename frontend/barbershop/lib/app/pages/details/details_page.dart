@@ -342,6 +342,14 @@ class _DatailsPageState extends State<DetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  widget.barbershop.imageUrl == ''
+                      ? Image.asset(
+                          'assets/images/logo1.jpeg',
+                          width: MediaQuery.of(context).size.width,
+                          height: 280,
+                          fit: BoxFit.cover,
+                        )
+                      :
                   Image.network(
                       "http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}",
                       width: MediaQuery.of(context).size.width,

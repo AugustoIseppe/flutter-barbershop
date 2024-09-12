@@ -2,6 +2,7 @@ import "package:barbershop/app/data/auth/auth.dart";
 import "package:barbershop/app/data/auth/auth_check.dart";
 import "package:barbershop/app/data/model/barbershop_model.dart";
 import "package:barbershop/app/data/repositories/babershop_service_repository.dart";
+import "package:barbershop/app/data/repositories/barber_best_rated_repository.dart";
 import "package:barbershop/app/data/repositories/barbershop_barber_repository.dart";
 import "package:barbershop/app/data/repositories/barbershop_repository.dart";
 import "package:barbershop/app/data/repositories/booking_repository.dart";
@@ -16,6 +17,7 @@ import "package:barbershop/app/pages/details/barber_store.dart";
 import "package:barbershop/app/pages/details/details.store.dart";
 import "package:barbershop/app/pages/details/slots_store.dart";
 import "package:barbershop/app/pages/home/barbershop_store.dart";
+import "package:barbershop/app/pages/home/best_rated_barber_store.dart";
 import "package:barbershop/app/pages/home/home_page.dart";
 import "package:barbershop/app/pages/login/login_page.dart";
 import "package:barbershop/app/pages/register/register_page.dart";
@@ -37,7 +39,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Auth(),
         ),
-        
         ChangeNotifierProvider(
           create: (context) => BarbershopStore(
             repository: BarbershopRepository(
@@ -80,6 +81,13 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => BestRatedBarberStore(
+            repository: BarberBestRatedRepository(
+              client: HttpClient(),
+            ),
+          ),
+        ),
       ],
       child: MaterialApp(
         locale: const Locale("pt", "BR"),
@@ -100,8 +108,9 @@ class MyApp extends StatelessWidget {
               const BookingPage(userData: {}, barbershopData: {}),
           Routes.barbershopPage: (context) => const BarbershopPage(),
           Routes.userProfile: (context) => const UserProfile(),
-          Routes.barberDetails: (context) => BarberDetails(barber: {}, barbershop: {} as BarbershopModel),
-          },
+          Routes.barberDetails: (context) =>
+              BarberDetails(barber: {}, barbershop: {} as BarbershopModel),
+        },
       ),
     );
   }

@@ -19,31 +19,51 @@ class BarbershopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ColorsPalletes colorsPalletes = ColorsPalletes();
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 10),
         Divider(
           color: colorsPalletes.denaryColor,
           thickness: .5,
         ),
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Text(
-                'Barbearias'.toUpperCase(),
-                style: GoogleFonts.abel(
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                  child: Text(
+                    'Barbearias'.toUpperCase(),
+                    style: GoogleFonts.abel(
+                      color: colorsPalletes.denaryColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Ionicons.cut_sharp,
                   color: colorsPalletes.denaryColor,
-                  fontSize: 18,
+                  size: 19,
+                ),
+              ],
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed('/barbershop-page');
+              },
+              child: Text(
+                'Ver lista completa',
+                style: GoogleFonts.abel(
+                  color: colorsPalletes.white,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationColor: colorsPalletes.white,
                 ),
               ),
             ),
-            Icon(
-              Ionicons.cut_sharp,
-              color: colorsPalletes.denaryColor,
-              size: 19,
-            ),
+            
           ],
         ),
         Consumer(
@@ -81,7 +101,7 @@ class BarbershopCard extends StatelessWidget {
             }
             return SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.5,
+              height: MediaQuery.of(context).size.height * 0.360,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
@@ -92,17 +112,19 @@ class BarbershopCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 4.0, vertical: 4),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           decoration: BoxDecoration(
+                            
                             color: colorsPalletes.secondaryColor,
                             borderRadius: BorderRadius.circular(15),
-                            border: Border.all(
-                              color: colorsPalletes.denaryColor,
-                              width: .4,
-                            ),
-                          ),
+                            // border: Border.all(
+                            //   color: Colors.white,
+                            //   width: .5,
+                            // ),
+                                                      ),
                           width: 190,
                           height: 300,
                           child: Column(
@@ -111,11 +133,15 @@ class BarbershopCard extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.all(6.0),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.network(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: barbershop.imageUrl != '' ? Image.network(
                                     "http://10.0.2.2:8800/users/uploads/${barbershop.imageUrl}",
-                                    fit: BoxFit.cover,
-                                    height: 170,
+                                    // fit: BoxFit.cover,
+                                    // height: 180,
+                                  ) : Image.asset(
+                                    'assets/images/logo1.jpeg',
+                                    // fit: BoxFit.cover,
+                                    // height: 180,
                                   ),
                                 ),
                               ),
@@ -125,7 +151,7 @@ class BarbershopCard extends StatelessWidget {
                                 child: Text(
                                   'Aberto Agora - 9:00-21:00',
                                   style: GoogleFonts.abel(
-                                    color: colorsPalletes.denaryColor,
+                                    color: colorsPalletes.white,
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -136,10 +162,10 @@ class BarbershopCard extends StatelessWidget {
                                 padding: const EdgeInsets.all(6.0),
                                 child: Text(
                                   barbershop.name.toUpperCase(),
-                                  style: GoogleFonts.abel(
+                                  style: GoogleFonts.lato(
                                     color: colorsPalletes.white,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,

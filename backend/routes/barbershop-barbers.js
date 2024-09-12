@@ -5,7 +5,7 @@ import { getBarber, bestRatedBarbers, createBarber, deleteBarber } from '../cont
 const router = express.Router();
 
 router.get('/barber/:barbershopid', getBarber);
-router.get('/barber/bestRated', bestRatedBarbers);
+router.get('/best-rated-barbers', bestRatedBarbers);
 router.post('/barber', upload.single("barberimage"), createBarber); //o nome barberimage é o mesmo que está no nome da coluna no banco de dados
 router.delete('/barber/:id', deleteBarber);
 

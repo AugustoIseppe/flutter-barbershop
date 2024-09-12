@@ -109,10 +109,17 @@ class _BarbershopPageState extends State<BarbershopPage> {
                                   ? colorsPallete.secondaryColor
                                   : colorsPallete.primaryColor,
                               child: ListTile(
-                                leading: CircleAvatar(
+                                leading: barbershop.imageUrl != '' ? CircleAvatar(
                                   radius: 30,
                                   backgroundImage:
-                                      NetworkImage(barbershop.imageUrl),
+                                      NetworkImage(
+                                        "http://10.0.2.2:8800/users/uploads/${barbershop.imageUrl}"
+                                      ),
+                                ) : const CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: const AssetImage(
+                                    'assets/images/logo1.jpeg',
+                                  ),
                                 ),
                                 title: Text(
                                   barbershop.name,
