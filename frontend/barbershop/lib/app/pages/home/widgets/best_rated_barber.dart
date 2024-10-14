@@ -1,3 +1,6 @@
+import 'package:barbershop/app/data/auth/auth.dart';
+import 'package:barbershop/app/pages/details/details_page.dart';
+import 'package:barbershop/app/pages/home/barbershop_store.dart';
 import 'package:barbershop/app/pages/home/best_rated_barber_store.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
 import 'package:flutter/material.dart';
@@ -80,74 +83,84 @@ class _BestRatedBarberState extends State<BestRatedBarber> {
                     itemCount: store.bestRatedBarbers.length,
                     itemBuilder: (context, index) {
                       final bestRatedBarber = store.bestRatedBarbers[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 4.0, vertical: 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              children: [
-                              CircleAvatar(
-                                radius: 36,
-                                child: CircleAvatar(
-                                  radius: 35,
-                                  backgroundImage: NetworkImage(
-                                  "http://10.0.2.2:8800/users/uploads/${bestRatedBarber.barberimage}"
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: 21,
-                                height: 21,
-                                decoration: BoxDecoration(
-                                  color: colorsPalletes.nonaryColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    bestRatedBarber.barberqtdservices.toString(),
-                                    style: GoogleFonts.lato(
-                                      color: colorsPalletes.primaryColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              ] 
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: Column(
+                      return GestureDetector(
+                        onTap: () {
+                          final store = Provider.of<BarbershopStore>(context, listen: false);
+                          final auth = Provider.of<Auth>(context, listen: false);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage(
+                            barbershop: store.barbershops.firstWhere((element) => element.id == bestRatedBarber.barbershopid),
+                            userData: auth.userData,
+                          )));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0, vertical: 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Stack(
                                 children: [
-                                  Text(
-                                    bestRatedBarber.barbername.toUpperCase(),
-                                    style: GoogleFonts.abel(
-                                      color: colorsPalletes.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                CircleAvatar(
+                                  radius: 36,
+                                  child: CircleAvatar(
+                                    radius: 35,
+                                    backgroundImage: NetworkImage(
+                                    "http://10.0.2.2:8800/users/uploads/${bestRatedBarber.barberimage}"
                                     ),
-                                    textAlign: TextAlign.start,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
                                   ),
-                                  Text(
-                                    bestRatedBarber.name.toUpperCase(),
-                                    style: GoogleFonts.abel(
-                                      color: colorsPalletes.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
+                                ),
+                                Container(
+                                  width: 21,
+                                  height: 21,
+                                  decoration: BoxDecoration(
+                                    color: colorsPalletes.nonaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      bestRatedBarber.barberqtdservices.toString(),
+                                      style: GoogleFonts.lato(
+                                        color: colorsPalletes.primaryColor,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w900,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
                                   ),
-                                ],
+                                ),
+                                ] 
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      bestRatedBarber.barbername.toUpperCase(),
+                                      style: GoogleFonts.abel(
+                                        color: colorsPalletes.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                    Text(
+                                      bestRatedBarber.name.toUpperCase(),
+                                      style: GoogleFonts.abel(
+                                        color: colorsPalletes.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
