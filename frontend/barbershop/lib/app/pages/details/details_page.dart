@@ -449,28 +449,32 @@ class _DatailsPageState extends State<DetailsPage> {
               color: colorsPalletes.nonaryColor,
               fontSize: 35,
               fontWeight: FontWeight.bold,
-              letterSpacing: 2,
+              letterSpacing: 1,
             ),
           ),
-          // Text(widget.userData['id'].toString(),
-          //     style: const TextStyle(color: Colors.white)),
-          Row(
-            children: [
-              Icon(
-                Iconsax.location,
-                color: colorsPalletes.white,
-                size: 15,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                widget.barbershop.address,
-                style: GoogleFonts.lato(
+          Container(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Icon(
+                  Iconsax.location,
                   color: colorsPalletes.white,
-                  fontSize: 14,
-                  // fontWeight: FontWeight.bold,
+                  size: 15,
                 ),
-              ),
-            ],
+                const SizedBox(width: 5),
+                Expanded(
+                  child: Text(
+                    widget.barbershop.address,
+                    style: GoogleFonts.lato(
+                      color: colorsPalletes.white,
+                      fontSize: 14,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+              ],
+            ),
           ),
           Row(
             children: [

@@ -72,6 +72,7 @@ class _UserProfileState extends State<UserProfile> {
       // Remover o SnackBar após a duração especificada
       Future.delayed(const Duration(seconds: 5)).then((_) => snackBar.remove());
     }
+
     final formKey = GlobalKey<FormState>();
     final formKey1 = GlobalKey<FormState>();
 
@@ -101,719 +102,138 @@ class _UserProfileState extends State<UserProfile> {
               ],
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  //* Header
-                  const HeaderUserPage(),
-                  //* Photo and Name - User
-                  PhotoAndName(auth: auth, colorsPalletes: colorsPalletes),
-                  Container(
-                    // color: Colors.red,
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20),
-                                child: Text(
-                                  'Suas informações',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 20,
-                                      // fontWeight: FontWeight.bold,
-                                      color: colorsPalletes.nonaryColor,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    //* Header
+                    const HeaderUserPage(),
+                    //* Photo and Name - User
+                    PhotoAndName(auth: auth, colorsPalletes: colorsPalletes),
+                    Container(
+                      // color: Colors.red,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Text(
+                                    'Suas informações',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        fontSize: 20,
+                                        // fontWeight: FontWeight.bold,
+                                        color: colorsPalletes.nonaryColor,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                        //* Info Consumer
-                        InfoConsumer(
-                            colorsPalletes: colorsPalletes, auth: auth),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              //!----------------- BOTÕES DE EDIÇÃO (editar perfil)-------------------
-              Container(
-                margin:
-                    const EdgeInsets.only(left: 20, top: 10, right: 20, bottom: 10),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: colorsPalletes.primaryColor,
-                                  title: Text(
-                                    'Editar Perfil',
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorsPalletes.nonaryColor,
-                                      ),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  content: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.8, // Defina a largura desejada
-                                    height: 120,
-                                    child: Column(
-                                      children: [
-                                        Form(
-                                          key: formKey,
-                                          child: Column(
-                                            children: [
-                                              TextFormField(
-                                                controller: newPhone,
-                                                style: GoogleFonts.lato(
-                                                  color: colorsPalletes.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                  labelText: 'Telefone',
-                                                  hintText:
-                                                      'Digite seu telefone',
-                                                  labelStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              TextFormField(
-                                                controller: newEmail,
-                                                style: GoogleFonts.lato(
-                                                  color: colorsPalletes.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                  labelText: 'Email',
-                                                  hintText: 'Digite seu email',
-                                                  labelStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    Column(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: GestureDetector(
-                                                onTap: () async {
-                                                  //!---------------ONTAP EDITAR PERFIL-------------------
-                                        
-                                                  final id = auth.userData['id'];
-                                                  final name = auth.userData['name'];
-                                                  final password = auth.userData['password'];
-                                        
-                                                  // Chama o método getUsers da UserStore para atualizar os dados
-                                                  await userStore.getUsers(
-                                                    id,
-                                                    newEmail.text,
-                                                    name,
-                                                    password,
-                                                    newPhone.text,
-                                                  );
-                                        
-                                                  // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                                                  await auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-                                        
-                                                  // Redesenha a tela para refletir os novos dados
-                                                  setState(() {});
-                                        
-                                                  // Exibe o SnackBar informando sucesso
-                                                  // Exibe o SnackBar no topo
-                                                  showTopSnackBar(
-                                                      // ignore: use_build_context_synchronously
-                                                      context,
-                                                      'Dados atualizados com sucesso!',
-                                                      Colors.greenAccent
-                                                          .shade700,
-                                                      Colors.greenAccent
-                                                          .shade700,
-                                                      Icons.check_circle);
-                                        
-                                                  // Fecha o AlertDialog
-                                                  // ignore: use_build_context_synchronously
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: colorsPalletes
-                                                        .white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(Iconsax.refresh,
-                                                            color: colorsPalletes
-                                                                .nonaryColor),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          'Atualizar',
-                                                          style: GoogleFonts
-                                                              .lato(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: colorsPalletes
-                                                                  .nonaryColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: colorsPalletes
-                                                        .white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                            Iconsax
-                                                                .close_square,
-                                                            color: colorsPalletes
-                                                                .nonaryColor),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          'Cancelar',
-                                                          style: GoogleFonts
-                                                              .lato(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: colorsPalletes
-                                                                  .nonaryColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
+                              const SizedBox(height: 10),
+                            ],
                           ),
-                          decoration: BoxDecoration(
-                            color: colorsPalletes.secondaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Iconsax.edit,
-                                    color: colorsPalletes.nonaryColor),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  'Editar Perfil',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: colorsPalletes.nonaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                          //* Info Consumer
+                          InfoConsumer(
+                              colorsPalletes: colorsPalletes, auth: auth),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    //!----------------- BOTÕES DE EDIÇÃO (editar senha)-------------------
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: colorsPalletes.primaryColor,
-                                  title: Text(
-                                    'Editar Senha',
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorsPalletes.nonaryColor,
-                                      ),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  content: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.8, // Defina a largura desejada
-                                    height: 230,
-                                    child: Column(
-                                      children: [
-                                        Form(
-                                          key: formKey1,
-                                          child: Column(
-                                            children: [
-                                              //* Senha antiga
-                                              TextFormField(
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Digite sua senha antiga';
-                                                  }
-                                                  if (value.length < 6) {
-                                                    return 'A senha deve ter no mínimo 6 caracteres';
-                                                  }
-                                                  return null;
-                                                },
-                                                controller: oldPassword,
-                                                style: GoogleFonts.lato(
-                                                  color: colorsPalletes.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                  labelText: 'Senha Antiga',
-                                                  labelStyle: TextStyle(
-                                                      color:
-                                                          colorsPalletes.white,
-                                                      fontSize: 13),
-                                                ),
-                                              ),
-                                              //* Nova senha
-                                              TextFormField(
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Digite sua nova senha';
-                                                  }
-                                                  if (value.length < 6) {
-                                                    return 'A senha deve ter no mínimo 6 caracteres';
-                                                  }
-                                                  return null;
-                                                },
-                                                controller: newPassword,
-                                                style: GoogleFonts.lato(
-                                                  color: colorsPalletes.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                  labelText: 'Nova Senha',
-                                                  labelStyle: TextStyle(
-                                                      color:
-                                                          colorsPalletes.white,
-                                                      fontSize: 13),
-                                                ),
-                                              ),
-                                              //* Confirmar nova senha
-                                              TextFormField(
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Confirme sua nova senha';
-                                                  }
-                                                  if (value.length < 6) {
-                                                    return 'A senha deve ter no mínimo 6 caracteres';
-                                                  }
-                                                  if (value !=
-                                                      newPassword.text) {
-                                                    return 'As senhas não coincidem';
-                                                  }
-                                                  return null;
-                                                },
-                                                controller: newPasswordConfirm,
-                                                style: GoogleFonts.lato(
-                                                  color: colorsPalletes.white,
-                                                ),
-                                                decoration: InputDecoration(
-                                                  hintStyle: TextStyle(
-                                                    color: colorsPalletes.white,
-                                                  ),
-                                                  labelText: 'Confirmar Senha',
-                                                  labelStyle: TextStyle(
-                                                      color:
-                                                          colorsPalletes.white,
-                                                      fontSize: 13),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                  ],
+                ),
+                //!----------------- BOTÕES DE EDIÇÃO (editar perfil)-------------------
+                Container(
+                  margin: const EdgeInsets.only(
+                      left: 20, top: 10, right: 20, bottom: 10),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        colorsPalletes.primaryColor,
+                                    title: Text(
+                                      'Editar Perfil',
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorsPalletes.nonaryColor,
                                         ),
-                                      ],
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                  ),
-                                  actions: [
-                                    Column(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: GestureDetector(
-                                                onTap: () async {
-                                                  //!---------------ONTAP EDITAR SENHA-------------------
-                                                  if (formKey1.currentState!
-                                                      .validate()) {
-                                                    if (auth.userData[
-                                                            'password'] !=
-                                                        oldPassword.text) {
-                                                      showTopSnackBar(
-                                                          context,
-                                                          'Senha antiga incorreta!',
-                                                          Colors.redAccent
-                                                              .shade700,
-                                                          Colors.redAccent
-                                                              .shade700,
-                                                          Icons.error);
-                                                      return;
-                                                    } else {
-                                        
-                                                      final id =
-                                                          auth.userData['id'];
-                                                      final email = auth
-                                                          .userData['email'];
-                                                      final name = auth
-                                                          .userData['name'];
-                                                      final password =
-                                                          newPassword.text;
-                                                      final phone = auth
-                                                          .userData['phone'];
-                                        
-                                                      // Chama o método getUsers da UserStore para atualizar os dados
-                                                      await userStore
-                                                          .getUsers(
-                                                        id,
-                                                        email,
-                                                        name,
-                                                        password,
-                                                        phone,
-                                                      );
-                                        
-                                                      // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                                                      await auth
-                                                          .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-                                        
-                                                      // Redesenha a tela para refletir os novos dados
-                                                      setState(() {});
-                                        
-                                                      // Exibe o SnackBar informando sucesso
-                                                      // Exibe o SnackBar no topo
-                                                      showTopSnackBar(
-                                                          // ignore: use_build_context_synchronously
-                                                          context,
-                                                          'Senha atualizada com sucesso!',
-                                                          Colors.greenAccent
-                                                              .shade700,
-                                                          Colors.greenAccent
-                                                              .shade700,
-                                                          Icons.check_circle);
-                                        
-                                                      // Fecha o AlertDialog
-                                                      // ignore: use_build_context_synchronously
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    }
-                                                  }
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: colorsPalletes
-                                                        .secondaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8, // Defina a largura desejada
+                                      height: 120,
+                                      child: Column(
+                                        children: [
+                                          Form(
+                                            key: formKey,
+                                            child: Column(
+                                              children: [
+                                                TextFormField(
+                                                  controller: newPhone,
+                                                  style: GoogleFonts.lato(
+                                                    color: colorsPalletes.white,
                                                   ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(Iconsax.refresh,
-                                                            color: colorsPalletes
-                                                                .nonaryColor),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          'Atualizar',
-                                                          style: GoogleFonts
-                                                              .lato(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: colorsPalletes
-                                                                  .nonaryColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                    ),
+                                                    labelText: 'Telefone',
+                                                    hintText:
+                                                        'Digite seu telefone',
+                                                    labelStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: colorsPalletes
-                                                        .secondaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                                TextFormField(
+                                                  controller: newEmail,
+                                                  style: GoogleFonts.lato(
+                                                    color: colorsPalletes.white,
                                                   ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                            Iconsax
-                                                                .close_square,
-                                                            color: colorsPalletes
-                                                                .nonaryColor),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          'Cancelar',
-                                                          style: GoogleFonts
-                                                              .lato(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              color: colorsPalletes
-                                                                  .nonaryColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                    ),
+                                                    labelText: 'Email',
+                                                    hintText:
+                                                        'Digite seu email',
+                                                    labelStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorsPalletes.secondaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Iconsax.edit,
-                                    color: colorsPalletes.nonaryColor),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  'Editar Senha',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: colorsPalletes.nonaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    //!----------------- BOTÕES DE EXCLUSÃO (excluir conta)-------------------
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: colorsPalletes.primaryColor,
-                                  title: Text(
-                                    'Excluir Conta',
-                                    style: GoogleFonts.lato(
-                                      textStyle: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: colorsPalletes.nonaryColor,
-                                      ),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  content: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.8, // Defina a largura desejada
-                                    height: 65,
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Tem certeza que deseja excluir sua conta?',
-                                          style: GoogleFonts.lato(
-                                            textStyle: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.normal,
-                                              color: colorsPalletes.nonaryColor,
+                                              ],
                                             ),
                                           ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  actions: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          child: Column(
+                                    actions: [
+                                      Column(
+                                        children: [
+                                          Column(
                                             children: [
                                               Padding(
                                                 padding:
@@ -821,23 +241,397 @@ class _UserProfileState extends State<UserProfile> {
                                                         horizontal: 20),
                                                 child: GestureDetector(
                                                   onTap: () async {
-                                                    //!--------------- ONTAP EXCLUIR CONTA -------------------
-                                                    try {
-                                                      final id =
-                                                          auth.userData['id'];
-                                                      await userRepository
-                                                          .deleteUser(id);
-                                                      await auth.logout();
+                                                    //!---------------ONTAP EDITAR PERFIL-------------------
 
-                                                      // Verifica se os dados foram removidos corretamente
+                                                    final id =
+                                                        auth.userData['id'];
+                                                    final name =
+                                                        auth.userData['name'];
+                                                    final password = auth
+                                                        .userData['password'];
 
-                                                      // Navega para a página de login
-                                                      // ignore: use_build_context_synchronously
-                                                      Navigator.of(context)
-                                                          .pushReplacementNamed(
-                                                              '/login-page');
-                                                    // ignore: empty_catches
-                                                    } catch (e) {
+                                                    // Chama o método getUsers da UserStore para atualizar os dados
+                                                    await userStore.getUsers(
+                                                      id,
+                                                      newEmail.text,
+                                                      name,
+                                                      password,
+                                                      newPhone.text,
+                                                    );
+
+                                                    // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
+                                                    await auth
+                                                        .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+
+                                                    // Redesenha a tela para refletir os novos dados
+                                                    setState(() {});
+
+                                                    // Exibe o SnackBar informando sucesso
+                                                    // Exibe o SnackBar no topo
+                                                    showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        context,
+                                                        'Dados atualizados com sucesso!',
+                                                        Colors.greenAccent
+                                                            .shade700,
+                                                        Colors.greenAccent
+                                                            .shade700,
+                                                        Icons.check_circle);
+
+                                                    // Fecha o AlertDialog
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(Iconsax.refresh,
+                                                              color: colorsPalletes
+                                                                  .nonaryColor),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Text(
+                                                            'Atualizar',
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: colorsPalletes
+                                                                    .nonaryColor,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                              Iconsax
+                                                                  .close_square,
+                                                              color: colorsPalletes
+                                                                  .nonaryColor),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Text(
+                                                            'Cancelar',
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: colorsPalletes
+                                                                    .nonaryColor,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorsPalletes.secondaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Iconsax.edit,
+                                      color: colorsPalletes.nonaryColor),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    'Editar Perfil',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: colorsPalletes.nonaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      //!----------------- BOTÕES DE EDIÇÃO (editar senha)-------------------
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        colorsPalletes.primaryColor,
+                                    title: Text(
+                                      'Editar Senha',
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorsPalletes.nonaryColor,
+                                        ),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8, // Defina a largura desejada
+                                      height: 230,
+                                      child: Column(
+                                        children: [
+                                          Form(
+                                            key: formKey1,
+                                            child: Column(
+                                              children: [
+                                                //* Senha antiga
+                                                TextFormField(
+                                                  validator: (value) {
+                                                    if (value!.isEmpty) {
+                                                      return 'Digite sua senha antiga';
+                                                    }
+                                                    if (value.length < 6) {
+                                                      return 'A senha deve ter no mínimo 6 caracteres';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  controller: oldPassword,
+                                                  style: GoogleFonts.lato(
+                                                    color: colorsPalletes.white,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                    ),
+                                                    labelText: 'Senha Antiga',
+                                                    labelStyle: TextStyle(
+                                                        color: colorsPalletes
+                                                            .white,
+                                                        fontSize: 13),
+                                                  ),
+                                                ),
+                                                //* Nova senha
+                                                TextFormField(
+                                                  validator: (value) {
+                                                    if (value!.isEmpty) {
+                                                      return 'Digite sua nova senha';
+                                                    }
+                                                    if (value.length < 6) {
+                                                      return 'A senha deve ter no mínimo 6 caracteres';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  controller: newPassword,
+                                                  style: GoogleFonts.lato(
+                                                    color: colorsPalletes.white,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                    ),
+                                                    labelText: 'Nova Senha',
+                                                    labelStyle: TextStyle(
+                                                        color: colorsPalletes
+                                                            .white,
+                                                        fontSize: 13),
+                                                  ),
+                                                ),
+                                                //* Confirmar nova senha
+                                                TextFormField(
+                                                  validator: (value) {
+                                                    if (value!.isEmpty) {
+                                                      return 'Confirme sua nova senha';
+                                                    }
+                                                    if (value.length < 6) {
+                                                      return 'A senha deve ter no mínimo 6 caracteres';
+                                                    }
+                                                    if (value !=
+                                                        newPassword.text) {
+                                                      return 'As senhas não coincidem';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  controller:
+                                                      newPasswordConfirm,
+                                                  style: GoogleFonts.lato(
+                                                    color: colorsPalletes.white,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                    hintStyle: TextStyle(
+                                                      color:
+                                                          colorsPalletes.white,
+                                                    ),
+                                                    labelText:
+                                                        'Confirmar Senha',
+                                                    labelStyle: TextStyle(
+                                                        color: colorsPalletes
+                                                            .white,
+                                                        fontSize: 13),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      Column(
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    //!---------------ONTAP EDITAR SENHA-------------------
+                                                    if (formKey1.currentState!
+                                                        .validate()) {
+                                                      if (auth.userData[
+                                                              'password'] !=
+                                                          oldPassword.text) {
+                                                        showTopSnackBar(
+                                                            context,
+                                                            'Senha antiga incorreta!',
+                                                            Colors.redAccent
+                                                                .shade700,
+                                                            Colors.redAccent
+                                                                .shade700,
+                                                            Icons.error);
+                                                        return;
+                                                      } else {
+                                                        final id =
+                                                            auth.userData['id'];
+                                                        final email = auth
+                                                            .userData['email'];
+                                                        final name = auth
+                                                            .userData['name'];
+                                                        final password =
+                                                            newPassword.text;
+                                                        final phone = auth
+                                                            .userData['phone'];
+
+                                                        // Chama o método getUsers da UserStore para atualizar os dados
+                                                        await userStore
+                                                            .getUsers(
+                                                          id,
+                                                          email,
+                                                          name,
+                                                          password,
+                                                          phone,
+                                                        );
+
+                                                        // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
+                                                        await auth
+                                                            .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+
+                                                        // Redesenha a tela para refletir os novos dados
+                                                        setState(() {});
+
+                                                        // Exibe o SnackBar informando sucesso
+                                                        // Exibe o SnackBar no topo
+                                                        showTopSnackBar(
+                                                            // ignore: use_build_context_synchronously
+                                                            context,
+                                                            'Senha atualizada com sucesso!',
+                                                            Colors.greenAccent
+                                                                .shade700,
+                                                            Colors.greenAccent
+                                                                .shade700,
+                                                            Icons.check_circle);
+
+                                                        // Fecha o AlertDialog
+                                                        // ignore: use_build_context_synchronously
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      }
                                                     }
                                                   },
                                                   child: Container(
@@ -867,7 +661,7 @@ class _UserProfileState extends State<UserProfile> {
                                                             width: 20,
                                                           ),
                                                           Text(
-                                                            'Sim',
+                                                            'Atualizar',
                                                             style: GoogleFonts
                                                                 .lato(
                                                               textStyle:
@@ -889,113 +683,343 @@ class _UserProfileState extends State<UserProfile> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: colorsPalletes
-                                                        .secondaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Padding(
+                                          const SizedBox(height: 5),
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Container(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 20),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                            Iconsax
-                                                                .close_square,
-                                                            color: colorsPalletes
-                                                                .nonaryColor),
-                                                        const SizedBox(
-                                                          width: 20,
-                                                        ),
-                                                        Text(
-                                                          'Cancelar',
-                                                          style: GoogleFonts
-                                                              .lato(
-                                                            textStyle:
-                                                                TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
+                                                        vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      color: colorsPalletes
+                                                          .secondaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                              Iconsax
+                                                                  .close_square,
                                                               color: colorsPalletes
-                                                                  .nonaryColor,
+                                                                  .nonaryColor),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Text(
+                                                            'Cancelar',
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: colorsPalletes
+                                                                    .nonaryColor,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: colorsPalletes.secondaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Iconsax.trash,
-                                    color: colorsPalletes.nonaryColor),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  'Excluir Conta',
-                                  style: GoogleFonts.lato(
-                                    textStyle: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.normal,
-                                      color: colorsPalletes.nonaryColor,
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorsPalletes.secondaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Iconsax.edit,
+                                      color: colorsPalletes.nonaryColor),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    'Editar Senha',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: colorsPalletes.nonaryColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 5),
+                      //!----------------- BOTÕES DE EXCLUSÃO (excluir conta)-------------------
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor:
+                                        colorsPalletes.primaryColor,
+                                    title: Text(
+                                      'Excluir Conta',
+                                      style: GoogleFonts.lato(
+                                        textStyle: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: colorsPalletes.nonaryColor,
+                                        ),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    content: SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8, // Defina a largura desejada
+                                      height: 65,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'Tem certeza que deseja excluir sua conta?',
+                                            style: GoogleFonts.lato(
+                                              textStyle: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.normal,
+                                                color:
+                                                    colorsPalletes.nonaryColor,
+                                              ),
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 20),
+                                                  child: GestureDetector(
+                                                    onTap: () async {
+                                                      //!--------------- ONTAP EXCLUIR CONTA -------------------
+                                                      try {
+                                                        final id =
+                                                            auth.userData['id'];
+                                                        await userRepository
+                                                            .deleteUser(id);
+                                                        await auth.logout();
+
+                                                        // Verifica se os dados foram removidos corretamente
+
+                                                        // Navega para a página de login
+                                                        // ignore: use_build_context_synchronously
+                                                        Navigator.of(context)
+                                                            .pushReplacementNamed(
+                                                                '/login-page');
+                                                        // ignore: empty_catches
+                                                      } catch (e) {}
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 10),
+                                                      decoration: BoxDecoration(
+                                                        color: colorsPalletes
+                                                            .secondaryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 20),
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                                Iconsax.refresh,
+                                                                color: colorsPalletes
+                                                                    .nonaryColor),
+                                                            const SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Text(
+                                                              'Sim',
+                                                              style: GoogleFonts
+                                                                  .lato(
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  color: colorsPalletes
+                                                                      .nonaryColor,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      color: colorsPalletes
+                                                          .secondaryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Icon(
+                                                              Iconsax
+                                                                  .close_square,
+                                                              color: colorsPalletes
+                                                                  .nonaryColor),
+                                                          const SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                          Text(
+                                                            'Cancelar',
+                                                            style: GoogleFonts
+                                                                .lato(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: colorsPalletes
+                                                                    .nonaryColor,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorsPalletes.secondaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Iconsax.trash,
+                                      color: colorsPalletes.nonaryColor),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    'Excluir Conta',
+                                    style: GoogleFonts.lato(
+                                      textStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: colorsPalletes.nonaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
