@@ -102,7 +102,7 @@ class BarbershopCard extends StatelessWidget {
             }
             return SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.360,
+              height: MediaQuery.of(context).size.height * 0.390,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
@@ -126,7 +126,7 @@ class BarbershopCard extends StatelessWidget {
                             // ),
                           ),
                           width: 190,
-                          height: 300,
+                          height: 285,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
