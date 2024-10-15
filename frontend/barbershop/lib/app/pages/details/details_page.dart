@@ -8,6 +8,7 @@ import 'package:barbershop/app/pages/details/details.store.dart';
 import 'package:barbershop/app/pages/details/slots_store.dart';
 import 'package:barbershop/app/pages/details/widgets/barbers.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +30,7 @@ class DetailsPage extends StatefulWidget {
 }
 
 class _DatailsPageState extends State<DetailsPage> {
+  final Constants constants = Constants();
   BookingRepository bookingRepository = BookingRepository(client: HttpClient());
   bool showServices = false;
   bool showBarbers = false;
@@ -263,6 +265,7 @@ class _DatailsPageState extends State<DetailsPage> {
     }
 
     final ColorsPalletes colorsPalletes = ColorsPalletes();
+    final Constants constants = Constants();
 
     return SafeArea(
       child: Scaffold(
@@ -311,7 +314,7 @@ class _DatailsPageState extends State<DetailsPage> {
                     ),
                     Positioned(
                       right: 4,
-                      top:3,
+                      top: 3,
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
@@ -349,18 +352,17 @@ class _DatailsPageState extends State<DetailsPage> {
                           height: 280,
                           fit: BoxFit.cover,
                         )
-                      :
-                  Image.network(
-                      "http://10.0.2.2:8800/users/uploads/${widget.barbershop.imageUrl}",
-                      width: MediaQuery.of(context).size.width,
-                      height: 280,
-                      fit: BoxFit.cover),
+                      : Image.network(
+                          "http://${constants.apiUrl}/users/uploads/${widget.barbershop.imageUrl}",
+                          width: MediaQuery.of(context).size.width,
+                          height: 280,
+                          fit: BoxFit.cover),
                   _buildBarbershopInfo(colorsPalletes),
                   _buildSectionDivider(colorsPalletes),
                   if (Provider.of<BarberStore>(context).barbers.isEmpty)
                     Container()
                   else
-                    Barbers( barbershop: widget.barbershop),
+                    Barbers(barbershop: widget.barbershop),
                   if (Provider.of<BarberStore>(context).barbers.isNotEmpty)
                     _buildSectionDivider(colorsPalletes),
                   _buildAboutSection(colorsPalletes),
@@ -1430,7 +1432,7 @@ class _DatailsPageState extends State<DetailsPage> {
                           padding: const EdgeInsets.only(bottom: 10.0),
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
-                                "http://10.0.2.2:8800/users/uploads/${barber.barberimage}"),
+                                "http://${constants.apiUrl}/users/uploads/${barber.barberimage}"),
                             radius: 20,
                           ),
                         ),

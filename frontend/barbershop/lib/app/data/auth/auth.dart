@@ -1,61 +1,60 @@
 import 'dart:convert';
 import 'package:barbershop/app/data/model/user_model.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:barbershop/app/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Auth with ChangeNotifier {
+  final Constants constants = Constants();
   Map<String, dynamic> _userData = {};
   bool get isAuth => _userData.isNotEmpty;
   Map<String, dynamic> get userData => _userData;
 
-Future<List<UserModel>> login(String email, String password) async {
-  // const urlLogin = "http://192.168.1.109:8800/Users/login"; // Emulador Android, dispositivo físico real
-  const urlLogin = "http://10.0.2.2:8800/Users/login"; // PC Localhost
+  Future<List<UserModel>> login(String email, String password) async {
+    final urlLogin =
+        "http://${constants.apiUrl}/Users/login"; // Emulador Android, dispositivo físico real
 
-  try {
-    final response = await http.post(
-      Uri.parse(urlLogin),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(urlLogin),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      print("JSON DATA: $jsonData");
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print("JSON DATA: $jsonData");
 
-      // Converte a lista de JSON para uma lista de objetos UserModel
-      final users = (jsonData as List)
-          .map<UserModel>((json) => UserModel.fromMap(json))
-          .toList();
-      for (var user in users) {
-        print("USER123123: ${user.toMap()}");
+        // Converte a lista de JSON para uma lista de objetos UserModel
+        final users = (jsonData as List)
+            .map<UserModel>((json) => UserModel.fromMap(json))
+            .toList();
+        for (var user in users) {
+          print("USER123123: ${user.toMap()}");
+        }
+        // Salva o primeiro usuário nos SharedPreferences
+        final userMap = users[0].toMap();
+        await Preferences.saveMap('userDataSharedPreferences', userMap);
+        await Preferences.getMap('userDataSharedPreferences');
+        print(userMap);
+        _userData = userMap;
+        print(users);
+        print("USER DATA: $_userData");
+        notifyListeners();
+        return users;
+      } else {
+        throw Exception('Falha ao fazer login: ${response.reasonPhrase}');
       }
-      // Salva o primeiro usuário nos SharedPreferences
-      final userMap = users[0].toMap();
-      await Preferences.saveMap('userDataSharedPreferences', userMap);
-      await Preferences.getMap('userDataSharedPreferences');
-      print(userMap);
-      _userData = userMap;
-      print(users);
-      print("USER DATA: $_userData");
-      notifyListeners();
-      return users;
-    } else {
-      throw Exception('Falha ao fazer login: ${response.reasonPhrase}');
+    } catch (e) {
+      throw Exception('Erro ao fazer login FRONTEND: $e');
     }
-  } catch (e) {
-    throw Exception('Erro ao fazer login FRONTEND: $e');
   }
-}
-
-
-
 
   Future<bool> tryAutoLogin() async {
     final storedUserData =
@@ -79,5 +78,4 @@ Future<List<UserModel>> login(String email, String password) async {
     _userData = {};
     notifyListeners();
   }
-
 }

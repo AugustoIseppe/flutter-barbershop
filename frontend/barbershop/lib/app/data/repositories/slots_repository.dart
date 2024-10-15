@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:barbershop/app/data/http/exceptions.dart';
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/model/slots_model.dart';
+import 'package:barbershop/app/utils/constants.dart';
 
 abstract class ISlotsRepository {
   Future<List<SlotsModel>> getSlots(String baberid, String date);
-  Future<List<SlotsModel>> updateSlots(String id, String timeid, String date, String barberid);
+  Future<List<SlotsModel>> updateSlots(
+      String id, String timeid, String date, String barberid);
 }
 
 class SlotsRepository implements ISlotsRepository {
+  final Constants constants = Constants();
   final IHttpClient client;
   SlotsRepository({required this.client});
 
@@ -17,7 +20,7 @@ class SlotsRepository implements ISlotsRepository {
   Future<List<SlotsModel>> getSlots(String baberid, String date) async {
     try {
       final String url =
-          'http://10.0.2.2:8800/slots?barberid=$baberid&date=$date';
+          'http://${constants.apiUrl}/slots?barberid=$baberid&date=$date';
       // final String url =
       //     'http://192.168.1.109:8800/slots?barbershopId=$babershopId&date=$date';
 
@@ -35,8 +38,7 @@ class SlotsRepository implements ISlotsRepository {
           slots.add(slot);
         }).toList();
         // ignore: unused_local_variable
-        for (var element in slots) {
-        }
+        for (var element in slots) {}
 
         return slots;
       } else if (response.statusCode != 200) {
@@ -50,40 +52,41 @@ class SlotsRepository implements ISlotsRepository {
   }
 
   @override
-Future<List<SlotsModel>> updateSlots(String id, String timeid, String date, String barberid) async {
-  try {
-    const String url = 'http://10.0.2.2:8800/Slots';
+  Future<List<SlotsModel>> updateSlots(
+      String id, String timeid, String date, String barberid) async {
+    try {
+      final String url = 'http://${constants.apiUrl}/Slots';
 
-    final response = await client.updateSlot(
-      url: url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        'id': id,
-        'timeid': timeid,
-        'date': date,
-        'barberid': barberid,
-      },
-    );
+      final response = await client.updateSlot(
+        url: url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          'id': id,
+          'timeid': timeid,
+          'date': date,
+          'barberid': barberid,
+        },
+      );
 
-    if (response.statusCode != 200) {
-      final body = jsonDecode(response.body);
-      throw Exception('Erro ao atualizar slot ${body['message']}');
+      if (response.statusCode != 200) {
+        final body = jsonDecode(response.body);
+        throw Exception('Erro ao atualizar slot ${body['message']}');
+      }
+
+      // Aqui, tratamos a resposta como um único objeto JSON
+      jsonDecode(response.body);
+
+      // Convertendo o mapa em uma instância de SlotsModel
+
+      final getSlots = await this.getSlots(barberid, date);
+
+      return getSlots;
+      // Retornando uma lista com um único elemento
+      // return [slot];
+    } catch (e) {
+      throw Exception('Erro ao buscar slots: $e');
     }
-
-    // Aqui, tratamos a resposta como um único objeto JSON
-    jsonDecode(response.body);
-
-    // Convertendo o mapa em uma instância de SlotsModel
-
-    final getSlots = await this.getSlots(barberid, date);
-
-    return getSlots;
-    // Retornando uma lista com um único elemento
-    // return [slot];
-  } catch (e) {
-    throw Exception('Erro ao buscar slots: $e');
-  }
   }
 }

@@ -2,6 +2,7 @@ import 'package:barbershop/app/data/model/barbershop_model.dart';
 import 'package:barbershop/app/pages/details/barber_details.dart';
 import 'package:barbershop/app/pages/details/barber_store.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class _BarbersState extends State<Barbers> {
   @override
   Widget build(BuildContext context) {
     ColorsPalletes colorsPalletes = ColorsPalletes();
+    final Constants constants = Constants();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
@@ -56,7 +58,12 @@ class _BarbersState extends State<Barbers> {
                     return GestureDetector(
                       onTap: () {
                         // Navegação para a tela de detalhes do barbeiro
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BarberDetails(barber: barber.toMap(), barbershop: widget.barbershop))); 
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BarberDetails(
+                                    barber: barber.toMap(),
+                                    barbershop: widget.barbershop)));
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(right: 10.0),
@@ -68,7 +75,7 @@ class _BarbersState extends State<Barbers> {
                               child: CircleAvatar(
                                 radius: 35,
                                 backgroundImage: NetworkImage(
-                                    "http://10.0.2.2:8800/users/uploads/${barber.barberimage}"),
+                                    "http://${constants.apiUrl}/users/uploads/${barber.barberimage}"),
                               ),
                             ),
                             Text(

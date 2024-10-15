@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:barbershop/app/data/auth/auth.dart';
 import 'package:barbershop/app/pages/user-profile/user_store.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,6 +48,7 @@ class _PhotoAndNameState extends State<PhotoAndName> {
 
   @override
   Widget build(BuildContext context) {
+    final Constants constants = Constants();
 
     return Consumer<UserStore>(
       builder: (context, userStore, child) {
@@ -82,7 +84,7 @@ class _PhotoAndNameState extends State<PhotoAndName> {
                             child: CircleAvatar(
                               radius: 123,
                               backgroundImage: NetworkImage(
-                                  "http://10.0.2.2:8800/users/uploads/${widget.auth.userData["image"]}"),
+                                  "http://${constants.apiUrl}/users/uploads/${widget.auth.userData["image"]}"),
                             ),
                           ),
                         ),
@@ -104,21 +106,20 @@ class _PhotoAndNameState extends State<PhotoAndName> {
                     onTap: () async {
                       await _pickImage();
                       final id = widget.auth.userData['id'];
-        
-        
+
                       //Chama o método getUsers da UserStore para atualizar os dados
                       await userStore.getUsersforImage(
                         id,
                         _selectedImage,
                       );
                       // print("&*&*&*&*&*&*&&*&&*naosei: ${naosei["imageUrl"]}");
-        
+
                       // Após a atualização, você pode também atualizar os dados armazenados no Auth (opcional)
-                      await widget.auth.tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
-        
+                      await widget.auth
+                          .tryAutoLogin(); // Isso reatualiza os dados do usuário no Auth
+
                       // Redesenha a tela para refletir os novos dados
                       setState(() {});
-        
                     },
                     child: Container(
                       padding: const EdgeInsets.all(5),

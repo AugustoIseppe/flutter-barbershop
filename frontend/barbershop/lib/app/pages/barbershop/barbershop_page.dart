@@ -1,6 +1,7 @@
 import 'package:barbershop/app/data/auth/auth.dart';
 import 'package:barbershop/app/pages/details/details_page.dart';
 import 'package:barbershop/app/pages/home/barbershop_store.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +26,7 @@ class _BarbershopPageState extends State<BarbershopPage> {
   @override
   Widget build(BuildContext context) {
     final ColorsPalletes colorsPallete = ColorsPalletes();
+    final Constants constants = Constants();
     final auth = Provider.of<Auth>(context, listen: false);
     return SafeArea(
       child: Scaffold(
@@ -113,7 +115,7 @@ class _BarbershopPageState extends State<BarbershopPage> {
                                     ? CircleAvatar(
                                         radius: 30,
                                         backgroundImage: NetworkImage(
-                                            "http://10.0.2.2:8800/users/uploads/${barbershop.imageUrl}"),
+                                            "http://${constants.apiUrl}/users/uploads/${barbershop.imageUrl}"),
                                       )
                                     : const CircleAvatar(
                                         radius: 30,

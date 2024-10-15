@@ -1,6 +1,7 @@
 import 'package:barbershop/app/pages/details/details_page.dart';
 import 'package:barbershop/app/pages/home/barbershop_store.dart';
 import 'package:barbershop/app/utils/colors_palletes.dart';
+import 'package:barbershop/app/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,6 +18,7 @@ class BarbershopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Constants constants = Constants();
     final ColorsPalletes colorsPalletes = ColorsPalletes();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,7 +65,6 @@ class BarbershopCard extends StatelessWidget {
                 ),
               ),
             ),
-            
           ],
         ),
         Consumer(
@@ -117,14 +118,13 @@ class BarbershopCard extends StatelessWidget {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            
                             color: colorsPalletes.secondaryColor,
                             borderRadius: BorderRadius.circular(15),
                             // border: Border.all(
                             //   color: Colors.white,
                             //   width: .5,
                             // ),
-                                                      ),
+                          ),
                           width: 190,
                           height: 300,
                           child: Column(
@@ -134,15 +134,17 @@ class BarbershopCard extends StatelessWidget {
                                 padding: const EdgeInsets.all(6.0),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15),
-                                  child: barbershop.imageUrl != '' ? Image.network(
-                                    "http://10.0.2.2:8800/users/uploads/${barbershop.imageUrl}",
-                                    // fit: BoxFit.cover,
-                                    // height: 180,
-                                  ) : Image.asset(
-                                    'assets/images/logo1.jpeg',
-                                    // fit: BoxFit.cover,
-                                    // height: 180,
-                                  ),
+                                  child: barbershop.imageUrl != ''
+                                      ? Image.network(
+                                          "http://${constants.apiUrl}/users/uploads/${barbershop.imageUrl}",
+                                          // fit: BoxFit.cover,
+                                          // height: 180,
+                                        )
+                                      : Image.asset(
+                                          'assets/images/logo1.jpeg',
+                                          // fit: BoxFit.cover,
+                                          // height: 180,
+                                        ),
                                 ),
                               ),
                               Padding(

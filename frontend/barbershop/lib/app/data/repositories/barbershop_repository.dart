@@ -2,22 +2,24 @@ import 'dart:convert';
 
 import 'package:barbershop/app/data/http/http_client.dart';
 import 'package:barbershop/app/data/model/barbershop_model.dart';
+import 'package:barbershop/app/utils/constants.dart';
 
 abstract class IBarbershopRepository {
   Future<List<BarbershopModel>> getAllBarbershops();
 }
 
 class BarbershopRepository implements IBarbershopRepository {
+  final Constants constants = Constants();
   final IHttpClient client;
   BarbershopRepository({required this.client});
 
   @override
   Future<List<BarbershopModel>> getAllBarbershops() async {
     try {
-
-        // const url = "http://192.168.1.109:8800/barbershops"; // Emulador Android, dispositivo físico real
-        const url = "http://10.0.2.2:8800/barbershops"; // PC Localhost
-        // PC Localhost
+      final url =
+          "http://${constants.apiUrl}/barbershops"; // Emulador Android, dispositivo físico real
+      // const url = "http://10.0.2.2:8800/barbershops"; // PC Localhost
+      // PC Localhost
       final response = await client.get(url: url);
 
       if (response.statusCode != 200) {
@@ -34,7 +36,6 @@ class BarbershopRepository implements IBarbershopRepository {
       return barbershops;
     } catch (e) {
       throw Exception('Erro ao buscar barbearias1: ${e.toString()}');
-    } 
-    
+    }
   }
 }
