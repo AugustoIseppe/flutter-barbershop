@@ -1327,7 +1327,7 @@ class _DatailsPageState extends State<DetailsPage> {
                               service.name,
                               style: GoogleFonts.lato(
                                 color: colorsPalletes.nonaryColor,
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
