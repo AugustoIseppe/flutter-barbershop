@@ -13,7 +13,7 @@ class Auth with ChangeNotifier {
 
   Future<List<UserModel>> login(String email, String password) async {
     final urlLogin =
-        "http://${constants.apiUrl}/Users/login"; // Emulador Android, dispositivo físico real
+        "http://${constants.apiUrl}/users/login"; // Emulador Android, dispositivo físico real
 
     try {
       final response = await http.post(
