@@ -2,6 +2,17 @@
 ![2](https://github.com/user-attachments/assets/b7b06f9d-352b-438f-adbe-002d6ff5699f)
 
 
+![Flutter](https://img.shields.io/badge/Flutter-3.5+-blue?logo=flutter&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20+-green?logo=node.js&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue?logo=postgresql&logoColor=white)
+![Provider](https://img.shields.io/badge/Provider-State%20Management-purple?logo=flutter&logoColor=white)
+![Shared Preferences](https://img.shields.io/badge/Shared%20Preferences-Local%20Storage-orange?logo=flutter&logoColor=white)
+![Image Picker](https://img.shields.io/badge/Image%20Picker-Image%20Upload-lightgrey?logo=flutter&logoColor=white)
+![Google Fonts](https://img.shields.io/badge/Google%20Fonts-Custom%20Fonts-red?logo=googlefonts&logoColor=white)
+![Intl](https://img.shields.io/badge/Intl-Internationalization-lightblue?logo=googletranslate&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+
 # 💈 Barbershop App + Backend Node.js
 
 Este projeto é composto por duas partes principais:
